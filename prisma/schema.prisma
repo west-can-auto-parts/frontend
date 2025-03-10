@@ -1,0 +1,334 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  price       Float?
+  supplier    String
+  images      String[]    // Array of image URLs
+  category    ProductCategory?   @relation(fields: [categoryId], references: [id])
+  categoryId  String?     @db.ObjectId
+  properties  Json        // Properties stored as a JSON object
+  createdAt   DateTime    @default(now())
+  featured    Boolean     @default(true)
+  bestSeller  Boolean     @default(true)
+  updatedAt   DateTime    @updatedAt
+  tags        String[]
+
+  CategoryToProduct CategoryToProduct[]
+}
+
+model Category {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  images      String[]
+  parent      Category?   @relation("CategoryParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId    String?     @db.ObjectId
+  properties  Json[]      // Array of JSON objects to represent properties
+  tags        String[]    // Array of tags associated with the category
+  featured    Boolean     @default(true)
+  bestSeller  Boolean     @default(true)
+
+  Category Category[] @relation("CategoryParent")
+
+  SubCategory SubCategory[]
+
+  CategoryToProduct CategoryToProduct[]
+}
+
+model SubCategory {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  images      String[]
+  parent      Category?   @relation(fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction) // References Category as parent
+  parentId    String?     @db.ObjectId
+  properties  Json[]      // Array of JSON objects to represent properties
+  tags        String[]    // Array of tags associated with the category
+  featured    Boolean     @default(true)
+  bestSeller  Boolean     @default(true)
+
+  SubCategoryToProductCategory SubCategoryToProductCategory[]
+}
+
+model ProductCategory {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  images      String[]
+  parent      ProductCategory?   @relation("ProductCategoryParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Self-referential relation to other ProductCategories
+  parentId    String?       @db.ObjectId
+  properties  Json[]        // Array of JSON objects to represent properties
+  tags        String[]      // Array of tags associated with the category
+  featured    Boolean       @default(true)
+  bestSeller  Boolean       @default(true)
+
+  Product Product[]
+
+  ProductCategory ProductCategory[] @relation("ProductCategoryParent")
+
+  SubCategoryToProductCategory SubCategoryToProductCategory[]
+}
+
+// Join table for many-to-many relation between SubCategory and ProductCategory
+model SubCategoryToProductCategory {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  subCategoryId   String         @db.ObjectId
+  productCategoryId String       @db.ObjectId
+
+  subCategory      SubCategory   @relation(fields: [subCategoryId], references: [id])
+  productCategory  ProductCategory @relation(fields: [productCategoryId], references: [id])
+}
+
+// Join table for many-to-many relation between Category and Product
+model CategoryToProduct {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  categoryId  String     @db.ObjectId
+  productId   String     @db.ObjectId
+
+  category    Category   @relation(fields: [categoryId], references: [id])
+  product     Product    @relation(fields: [productId], references: [id])
+}
+
+model Blog {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  content        String
+  imageUrl       String?   // Optional image URL
+  categories     String[]  // Array of category names as strings
+  tags           String[]  // Array of tags as strings
+  authorName     String
+  authorLinkedin String?   // Optional LinkedIn profile URL
+  createdAt      DateTime  @default(now())
+  featured       Boolean   @default(false)
+  newBlog        Boolean   @default(true)
+}
+
+model Contact {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String
+  lastName    String
+  company     String?  // Optional
+  email       String
+  phoneNumber String
+  message     String
+  agreed      Boolean
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model JobApplication {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  applicantName    String
+  applicantEmail   String   @map("applicant_email") // Lowercase can be enforced in the application logic
+  phone            String
+  resume           String
+  coverLetter      String?  // Optional
+  positionApplied  String
+  location         String
+  experienceYears  Int
+  status           JobApplicationStatus @default(Applied)
+  applicationDate  DateTime @default(now())
+}
+
+enum JobApplicationStatus {
+  Applied
+  Reviewed
+  Interviewed
+  Offered
+  Rejected
+}
+
+model JobOpening {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  jobTitle            String
+  location            String
+  company             String
+  jobDescription      String
+  responsibilities    String[]  // Array of responsibilities
+  qualifications      String[]  // Array of qualifications
+  employmentType      EmploymentType
+  salaryRange         String?   // Optional field
+  applicationDeadline DateTime? // Optional field
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  active              Boolean   @default(true)
+}
+
+enum EmploymentType {
+  FullTime
+  PartTime
+  Contract
+  Internship
+}
+
+model ProductQuery {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  email      String
+  store      String
+  phoneNumber String?
+  part       String
+  message    String
+  createdAt  DateTime @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model VerificationToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+}
+
+model User {
+  id                      String                 @id @default(auto()) @map("_id") @db.ObjectId
+  name                    String?
+  email                   String?                @unique
+  emailVerified           DateTime?
+  image                   String?
+  password                String?
+  role                    UserRole               @default(USER)
+  accounts                Account[]
+  isTwoFactorEnabled      Boolean                @default(false)
+  twoFactorConfirmation   TwoFactorConfirmation?
+  twoFactorConfirmationId String?                @db.ObjectId
+  addresses               Address[]              // New field for multiple addresses
+  phoneNumber             String?          // New field for multiple phone numbers
+  cars                    Car[]                  // New field for multiple cars
+  orders                  Order[]                // New field for multiple orders
+
+  PhoneNumber PhoneNumber[]
+}
+
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  street    String
+  city      String
+  state     String
+  postalCode String
+  country   String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PhoneNumber {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  number    String
+  type      PhoneType
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum PhoneType {
+  Home
+  Work
+  Mobile
+}
+
+model Car {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  year      Int
+  make      String
+  model     String
+  engine    String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String    @db.ObjectId
+  orderNumber String
+  date        DateTime  @default(now())
+  totalAmount Float
+  status      OrderStatus
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum OrderStatus {
+  Pending
+  Processing
+  Shipped
+  Delivered
+  Canceled
+}
+
+model Newsletter {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  email       String   @unique
+  subscribedAt DateTime @default(now())
+}
+
+model Subscriber {
+  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  email String  @unique
+  createdAt DateTime @default(now())
+}
