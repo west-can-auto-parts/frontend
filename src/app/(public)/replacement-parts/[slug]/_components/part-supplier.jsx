@@ -19,12 +19,12 @@ export const PartSupplier = ({ subCategoryName }) => {
   const router = useRouter();
 
   function stringToSlug(str) {
-    str = str.replace("&", "and")
-            .replace("/", "_");
+    str = str.replace("&", "and");
+    str = str.replace(/,/g, "~");
     return str
       .toLowerCase()
       .trim()
-      .replace(/[^a-z0-9 -_]/g, "")
+      .replace(/[^a-z0-9 -~]/g, "")
       .replace(/\s+/g, "-")
       .replace(/--+/g, "-");
   }

@@ -11,7 +11,7 @@ import { ListLayout } from './list-layout'
 
 export const ProductCards = ({ parts }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage, setProductsPerPage] = useState(10); // Default number of products per page
+  const [productsPerPage, setProductsPerPage] = useState(12); // Default number of products per page
   const [layout, setLayout] = useState('grid-4'); // Default layout is 4-column grid
 
   // Directly use parts since it's already flat

@@ -76,12 +76,14 @@ const PopularCategories = () => {
             .filter(cat => (view === 'featured' ? cat.isFeatured : cat.isBestSeller));
     };
     function stringToSlug(str) {
+        str = str.replace("&", "and");
+        str = str.replace(/,/g, "~");
         return str
-            .toLowerCase()                  // Convert the string to lowercase
-            .trim()                         // Remove any leading or trailing whitespace
-            .replace(/[^a-z0-9 -]/g, '')    // Remove all non-alphanumeric characters except for spaces and hyphens
-            .replace(/\s+/g, '-')           // Replace spaces and consecutive spaces with a single hyphen
-            .replace(/--+/g, '-');          // Replace multiple hyphens with a single hyphen
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9 -~]/g, "")
+            .replace(/\s+/g, "-")
+            .replace(/--+/g, "-");
     }
 
 

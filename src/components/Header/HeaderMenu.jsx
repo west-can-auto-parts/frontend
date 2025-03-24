@@ -37,11 +37,11 @@ const HeaderMenu = () => {
 
     function stringToSlug(str) {
         str = str.replace("&", "and");
-      
+        str = str.replace(/,/g, "~");
         return str
           .toLowerCase()          
           .trim()                 
-          .replace(/[^a-z0-9 -]/g, "")  
+          .replace(/[^a-z0-9 -~]/g, "")  
           .replace(/\s+/g, "-")         
           .replace(/--+/g, "-");       
       }
