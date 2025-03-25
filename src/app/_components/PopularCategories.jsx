@@ -142,7 +142,7 @@ const PopularCategories = () => {
 
                             </div>
                         </div>
-                        <div className='w-full lg:w-4/5'>
+                        <div className='w-full lg:w-4/5 cursor-pointer'>
                             {subCats.some(cat => cat.categoryName === menu.title) && (
                                 <Swiper
                                     spaceBetween={12}
@@ -159,7 +159,7 @@ const PopularCategories = () => {
                                 >
                                     {subCats.filter(subCat => subCat.categoryName === menu.title).map(product => (
                                         <SwiperSlide key={product.id} className="py-6 md:py-2 h-full">
-                                            <div className="bg-white shadow-md rounded h-full group transition" onClick={() => router.push(`/shop/${encodeURI(product.name)}`)}>
+                                            <div className="bg-white shadow-md rounded h-full group transition" onClick={() => router.push(`/shop/${stringToSlug(product.name)}`)}>
                                                 <img src={product.images[0] || "https://via.placeholder.com/250"} alt={product.name} className="w-full h-[25vh] object-contain mb-4 rounded" />
                                                 <div className="p-4">
                                                 <h3 className="text-lg font-semibold mb-2 text-[#b21b29] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -169,8 +169,8 @@ const PopularCategories = () => {
                                                     <div className="flex justify-between items-center mt-4">
                                                         <Link className='text-sm bg-[#b21b29] px-2 py-1 text-white rounded-md font-semibold flex gap-2 items-center' href={
                                                             menu.name === "Replacement Parts" || menu.name === "Fluids & Lubricants"
-                                                                ? `/shop/${encodeURI(product.name)}`
-                                                                : `/shop/${encodeURI(product.name)}`
+                                                                ? `/shop/${stringToSlug(product.name)}`
+                                                                : `/shop/${stringToSlug(product.name)}`
                                                         } >
                                                             <CgShoppingCart /> Shop Now
                                                         </Link>
