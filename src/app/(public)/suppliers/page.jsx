@@ -21,7 +21,7 @@ const SuppliersPage = () => {
 
   const isProduction = process.env.NODE_ENV === "production";
   const apiUrl = isProduction
-    ? "https://westcanuserbackend.onrender.com/api/suppliers/all"
+    ? "https://clientsidebackend.onrender.com/api/suppliers/all"
     : "http://localhost:8080/api/suppliers/all";
 
   useEffect(() => {

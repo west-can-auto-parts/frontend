@@ -25,7 +25,7 @@ const Page: React.FC = () => {
   const { logout: oauthLogout } = useOAuth2();
   const isProduction = process.env.NODE_ENV === "production";
   const apiUrl = isProduction
-    ? "https://westcanuserbackend.onrender.com/api"
+    ? "https://clientsidebackend.onrender.com/api"
     : "http://localhost:8080/api";
 
   // Logout function

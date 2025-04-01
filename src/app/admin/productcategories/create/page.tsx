@@ -72,7 +72,7 @@ const ProductCategoriesPage = () => {
   const router = useRouter();
   const isProduction = process.env.NODE_ENV === 'production';
   const apiUrl = isProduction
-    ? 'https://westcanadmin.onrender.com/admin/api'
+    ? 'https://adminbackend-cria.onrender.com/admin/api'
     : 'http://localhost:8081/admin/api';
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null;

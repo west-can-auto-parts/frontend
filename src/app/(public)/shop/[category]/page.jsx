@@ -12,7 +12,7 @@ import { PartTags } from "./_components/part-tags";
 
 const isProduction = process.env.NODE_ENV === "production";
 const apiUrl1 = isProduction
-  ? "https://westcanuserbackend.onrender.com/"
+  ? "https://clientsidebackend.onrender.com/"
   : "http://localhost:8080/";
 
 const apiUrl = apiUrl1 + "api/product";

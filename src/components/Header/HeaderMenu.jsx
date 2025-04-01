@@ -30,7 +30,7 @@ const HeaderMenu = () => {
     const dropdownRef = useRef(null);
     const isProduction = process.env.NODE_ENV === 'production';
     const apiBaseUrl = isProduction
-      ? 'https://westcanuserbackend.onrender.com/api/product/shop-by-category'
+      ? 'https://clientsidebackend.onrender.com/api/product/shop-by-category'
       : 'http://localhost:8080/api/product/shop-by-category';
 
     // const apiBaseUrl = "http://localhost:8080/api/product/shop-by-category";

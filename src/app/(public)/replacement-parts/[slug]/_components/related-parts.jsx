@@ -21,7 +21,7 @@ export const RelatedParts = ({ subCategoryName }) => {
     const router = useRouter();
     const isProduction = process.env.NODE_ENV === 'production';
     const apiUrl = isProduction
-        ? 'https://westcanuserbackend.onrender.com/api/product'
+        ? 'https://clientsidebackend.onrender.com/api/product'
         : 'http://localhost:8080/api/product';
 
     function stringToSlug(str) {

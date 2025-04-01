@@ -61,7 +61,7 @@ const EditBlogPage = ({ params }: { params: { blogId: string } }) => {
   const router = useRouter();
   const isProduction = process.env.NODE_ENV === "production";
     const apiUrl = isProduction
-    ? "https://westcanadmin.onrender.com/admin/api"
+    ? "https://adminbackend-cria.onrender.com/admin/api"
     : "http://localhost:8081/api/blog";
     const token = typeof window !== 'undefined' ? localStorage.getItem('') : null;
   useEffect(() => {

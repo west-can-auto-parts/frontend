@@ -6,7 +6,7 @@ import locations from "@/datas/store";
 
 const isProduction = process.env.NODE_ENV === 'production';
 const apiUrl = isProduction
-  ? 'https://westcanuserbackend.onrender.com/api/contact'
+  ? 'https://clientsidebackend.onrender.com/api/contact'
   : 'http://localhost:8080/api/contact';
 const Form = () => {
   const [selectedLocation, setSelectedLocation] = useState(locations[0]);

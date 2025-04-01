@@ -14,7 +14,7 @@ export default function ResetPassword() {
 
   const isProduction = process.env.NODE_ENV === 'production';
   const apiUrl = isProduction
-    ? 'https://westcanuserbackend.onrender.com/api/auth'
+    ? 'https://clientsidebackend.onrender.com/api/auth'
     : 'http://localhost:8080/api/auth';
 
   useEffect(() => {

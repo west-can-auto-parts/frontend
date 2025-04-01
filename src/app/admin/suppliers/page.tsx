@@ -22,7 +22,7 @@ const SupplierPage = () => {
 
   const isProduction = process.env.NODE_ENV === "production";
   const apiUrl = isProduction
-    ? "https://westcanadmin.onrender.com/admin/api/suppliers"
+    ? "https://adminbackend-cria.onrender.com/admin/api/suppliers"
     : "http://localhost:8081/admin/api/suppliers";
 
   // Fetch product categories

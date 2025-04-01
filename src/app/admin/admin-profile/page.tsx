@@ -25,7 +25,7 @@ const AdminUsersPage = () => {
 
     const isProduction = process.env.NODE_ENV === "production";
     const apiUrl = isProduction
-    ? "https://westcanadmin.onrender.com/api/admin-users"
+    ? "https://adminbackend-cria.onrender.com/api/admin-users"
     : "http://localhost:8081/api/admin-users";
     const token = typeof window !== "undefined" ? localStorage.getItem("jwt_token") : null;
 

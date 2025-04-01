@@ -10,10 +10,10 @@ import 'swiper/css/autoplay';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const apiUrl = isProduction
-    ? 'https://westcanuserbackend.onrender.com/api/blog'
+    ? 'https://clientsidebackend.onrender.com/api/blog'
     : 'http://localhost:8080/api/blog';
 const apiUrl1 = isProduction
-    ? 'https://westcanuserbackend.onrender.com/api/suppliers'
+    ? 'https://clientsidebackend.onrender.com/api/suppliers'
     : 'http://localhost:8080/api/suppliers';
 
 const fetchBlogs = async () => {
