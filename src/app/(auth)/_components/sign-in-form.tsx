@@ -153,7 +153,6 @@ export const SignInForm = () => {
 
           <div className="flex flex-wrap md:flex-nowrap gap-2">
             <GoogleSignInButton />
-            <AppleSignInButton />
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
