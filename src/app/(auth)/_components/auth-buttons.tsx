@@ -30,21 +30,21 @@ export function GoogleSignInButton() {
 }
 
 export function AppleSignInButton() {
-  const onClick = () => {
-    signIn("apple", {
-      callbackUrl: DEFAULT_LOGIN_REDIRECT, // Apple sign-in redirect (customize as needed)
-    });
-  };
+  // const onClick = () => {
+  //   signIn("apple", {
+  //     callbackUrl: DEFAULT_LOGIN_REDIRECT, // Apple sign-in redirect (customize as needed)
+  //   });
+  // };
 
-  return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center font-semibold justify-center h-12 px-6 mt-4 transition-colors duration-300 bg-white border-[1px] border-gray-200 shadow-md text-sm text-black rounded-lg focus:shadow-outline hover:bg-gray-100"
-    >
-      <Image src={appleLogo} alt="Apple Logo" width={20} height={20} />
-      <span className="ml-4">Continue with Apple</span>
-    </button>
-  );
+  // return (
+  //   <button
+  //     onClick={onClick}
+  //     className="w-full flex items-center font-semibold justify-center h-12 px-6 mt-4 transition-colors duration-300 bg-white border-[1px] border-gray-200 shadow-md text-sm text-black rounded-lg focus:shadow-outline hover:bg-gray-100"
+  //   >
+  //     <Image src={appleLogo} alt="Apple Logo" width={20} height={20} />
+  //     <span className="ml-4">Continue with Apple</span>
+  //   </button>
+  // );
 }
 
 export function CredentialsSignInButton() {
