@@ -130,9 +130,11 @@ export const ProductDescription = ({ myProduct }) => {
 
     return (
         <div className="w-full md:w-1/2">
-            {isHovering && (
+                        {isHovering && (
                 <div
-                    className="absolute bottom-[15%] transform -translate-x-1/2 translate-x-12 bg-[#b12b29] text-white text-sm rounded-md p-2 shadow-lg z-50 mt-2"
+                    className="absolute top-full left-1/2 transform -translate-x-1/2 
+                    bg-[#b12b29] text-white text-sm rounded-md p-2 shadow-lg z-50 mt-2
+                    w-full md:w-auto whitespace-nowrap"
                 >
                     Click the SHOP NOW button below to find the perfect brake rotors for your vehicle!
                 </div>
