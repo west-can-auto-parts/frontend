@@ -9,20 +9,28 @@ import 'swiper/css/autoplay'
 import { Pagination, Autoplay } from "swiper/modules";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa6";
+import { throttle } from 'lodash';
 
 export const GoogleReviews = ({ apiKey, placeId }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isProduction = process.env.NODE_ENV === 'production';
+  const apiUrl = isProduction
+    ? 'https://westcanuserbackend.onrender.com'
+    : 'http://localhost:8080/api/review';
+
+  const throttledImageLoad = throttle((e) => {
+    e.target.onerror = null; // Prevents looping
+    e.target.src = 'https://via.placeholder.com/40'; // Placeholder image URL
+  }, 1000); // Throttle to 1 second
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`/api/reviews`);
-        const filteredReviews = response.data.combinedReviews.filter(
-          (review) => review.rating >= 4 // Only show reviews with rating above 4
-        );
-        setReviews(filteredReviews);
+        const response = await fetch(`${apiUrl}/getAllReviews`);
+        const data = await response.json();
+        setReviews(data);
       } catch (err) {
         setError("Error fetching reviews");
         console.error(err);
@@ -52,90 +60,79 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="w-10/12 mx-auto rounded-lg flex flex-wrap md:flex-nowrap gap-2 md:gap-4 py-2 md:py-6">
-      <div className="w-full md:w-1/2 flex flex-col justify-center">
-        <p className="text-2xl font-bold">
-          Know What Our Customers Have To Say For Us
-        </p>
-        <p className="font-semibold text-[#b12b29]">
-          Reviews, Experiences and a lot more!
-        </p>
-
-      </div>
-      <div className="w-full md:w-1/2">
-        {reviews.length === 0 ? (
-          <p>No reviews available.</p>
-        ) : (
-          <Swiper
-            spaceBetween={10}
-            slidesPerView={1}
-            pagination={{ clickable: true }}
-            modules={[Pagination, Autoplay]}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false
-            }}
-            className="w-full h-full"
-            breakpoints={{
-              640: {
-                slidesPerView: 1,
-                spaceBetween: 4,
-              },
-              768: {
-                slidesPerView: 1,
-              },
-              1024: {
-                slidesPerView: 1,
-              },
-              1280: {
-                slidesPerView: 1,
-              },
-            }}
-          >
-            {reviews.map((review, index) => (
-              <SwiperSlide key={index} className="!h-full pt-4 pb-12 px-1">
-
-                <div className="bg-[#b91b29] text-white p-4 rounded-lg shadow-md !h-full flex flex-col justify-between" style={{ height: "100%" }}>
-                  <FaQuoteLeft className="w-5 h-5"/>
-
-                  <p className=" mb-2 text-md !line-clamp-3 md:!line-clamp-2">{review.text}</p>
-
-                <FaQuoteRight className="w-5 h-5 ml-auto"/>
-
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center mb-2">
-                      <img
-                        src={review.profile_photo_url}
-                        alt={`${review.author_name}'s profile`}
-                        className="rounded-full w-10 h-10 mr-4"
-                      />
-                      <div>
-                        <div className="flex items-center mb-2">
-                          {renderStars(review.rating)}
-                          <span className="ml-2 text-sm ">({review.rating}/5)</span>
+    <div className="w-full py-6 md:py-12">
+      <div className="w-10/12 mx-auto">
+        <h3 className="text-2xl font-bold mb-8 text-center">Know What Our Customers Have To Say For Us</h3>
+        <div className="w-full mx-auto">
+          {reviews.length === 0 ? (
+            <p>No reviews available.</p>
+          ) : (
+            <Swiper
+              modules={[Pagination, Autoplay]}
+              spaceBetween={30}
+              slidesPerView={3}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1,
+                  spaceBetween: 10,
+                },
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+                1280: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+              }}
+            >
+              {reviews.map((review, index) => (
+                <SwiperSlide key={index} className="p-3 rounded-md" style={{ minWidth: '300px' }}>
+                  <div className="bg-[#b91b29] text-white p-4 rounded-lg shadow-md flex flex-col justify-between h-full" style={{ minHeight: '250px' }}>
+                    <FaQuoteLeft className="w-5 h-5"/>
+                    <p className="mb-2 text-md !line-clamp-3 md:!line-clamp-2">{review.description}</p>
+                    <FaQuoteRight className="w-5 h-5 ml-auto"/>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center mb-2">
+                        <img
+                          src={review.photoUrl}
+                          alt={`${review.name}'s profile`}
+                          className="rounded-full w-10 h-10 mr-4 flex-shrink-0"
+                          onError={throttledImageLoad}
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center mb-2">
+                            {renderStars(review.rating)}
+                            <span className="ml-2 text-sm mr-4">({review.rating}/5)</span>
+                          </div>
+                          <div className="mb-4">
+                            <p className="font-semibold truncate max-w-[80px]">{review.name.split(' ')[0]}</p>
+                          </div>
                         </div>
-                        {/* <p className="font-semibold">{review.author_name}</p> */}
-                        <p className="text-xs ">
-                          <em>{review.relative_time_description}</em>
-                        </p>
                       </div>
+                      <a
+                        href={review.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-white font-bold text-sm hover:underline ml-4"
+                      >
+                        View on Google
+                      </a>
                     </div>
-
-                    <a
-                      href={review.author_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white font-bold text-sm hover:underline"
-                    >
-                      View on Google
-                    </a>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        )}
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
+        </div>
       </div>
     </div>
   );
