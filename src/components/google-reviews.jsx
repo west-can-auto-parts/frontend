@@ -17,7 +17,7 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
   const [error, setError] = useState(null);
   const isProduction = process.env.NODE_ENV === 'production';
   const apiUrl = isProduction
-    ? 'https://westcanuserbackend.onrender.com'
+    ? 'https://westcanuserbackend.onrender.com/api/review'
     : 'http://localhost:8080/api/review';
 
   const throttledImageLoad = throttle((e) => {
