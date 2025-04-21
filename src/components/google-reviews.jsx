@@ -72,7 +72,7 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
               spaceBetween={30}
               slidesPerView={3}
               autoplay={{
-                delay: 3000,
+                delay: 5000,
                 disableOnInteraction: false,
               }}
               breakpoints={{
@@ -98,9 +98,9 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
                 <SwiperSlide key={index} className="p-3 rounded-md" style={{ minWidth: '300px' }}>
                   <div className="bg-[#b91b29] text-white p-4 rounded-lg shadow-md flex flex-col justify-between h-full" style={{ minHeight: '250px' }}>
                     <FaQuoteLeft className="w-5 h-5"/>
-                    <p className="mb-2 text-md !line-clamp-3 md:!line-clamp-2">{review.description}</p>
+                    <p className="mb-4 text-md !line-clamp-6 md:!line-clamp-3">{review.description}</p>
                     <FaQuoteRight className="w-5 h-5 ml-auto"/>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mt-4">
                       <div className="flex items-center mb-2">
                         <img
                           src={review.photoUrl}
