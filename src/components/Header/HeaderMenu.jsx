@@ -17,7 +17,8 @@ const navItems = [
     { href: "/categories", label: "Shop All" },
     { href: "/blogs", label: "Blogs" },
     { href: "/suppliers", label: "Suppliers" },
-    { href: "/our-advantage", label: "Our Advantage" },
+    // { href: "/vehicle", label: "Vehicle" },
+    { href: "/our-advantage", label: "Our Advantage" }
 ];
 
 const HeaderMenu = () => {

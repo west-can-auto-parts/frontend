@@ -10,16 +10,16 @@ const Page = ({ params }) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
 
-  const isProduction = process.env.NODE_ENV === "production";
-  const apiUrl = isProduction
-    ? "https://clientsidebackend.onrender.com/api/suppliers"
-    : "http://localhost:8080/api/suppliers";
+  // const isProduction = process.env.NODE_ENV === "production";
+  // const apiUrl = isProduction
+  //   ? "https://clientsidebackend.onrender.com/api/suppliers"
+  //   : "http://localhost:8080/api/suppliers";
 
-  
+
 
   function stringToSlug(str) {
     str = str.replace("&", "and");
@@ -130,37 +130,37 @@ const Page = ({ params }) => {
   };
 
 
-  useEffect(() => {
-    const fetchSupplierData = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/name`, {
-          params: { names: brand },
-        });
-        setSupplier(response.data);
+  // useEffect(() => {
+  //   const fetchSupplierData = async () => {
+  //     try {
+  //       const response = await axios.get(`${apiUrl}/name`, {
+  //         params: { names: brand },
+  //       });
+  //       setSupplier(response.data);
 
-        const sortedCategories = Object.entries(response.data.subCategory || {})
-          .sort((a, b) => a[1].position - b[1].position)
-          .map(([key]) => ({ value: key, label: key }));
+  //       const sortedCategories = Object.entries(response.data.subCategory || {})
+  //         .sort((a, b) => a[1].position - b[1].position)
+  //         .map(([key]) => ({ value: key, label: key }));
 
-        setSelectedCategory(sortedCategories[0]?.value || "");
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching supplier data:", error);
-        setIsLoading(false);
-      }
-    };
+  //       setSelectedCategory(sortedCategories[0]?.value || "");
+  //       setIsLoading(false);
+  //     } catch (error) {
+  //       console.error("Error fetching supplier data:", error);
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchSupplierData();
-  }, [brand]);
+  //   fetchSupplierData();
+  // }, [brand]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobileView(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsMobileView(window.innerWidth < 768);
+  //   };
+  //   handleResize();
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
   const toggleDescription = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
@@ -183,6 +183,155 @@ const Page = ({ params }) => {
   const backgroundImageUrl = (supplier?.bannerUrl) ||
     "https://res.cloudinary.com/dpeocx0yy/image/upload/v1737539505/BANNER_fwflwx.png";
 
+
+  const vehicles = [
+    {
+      id: 1,
+      name: "Toyota Camry",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Sedan"
+    },
+    {
+      id: 2,
+      name: "Honda Civic",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "Sedan"
+    },
+    {
+      id: 3,
+      name: "Ford F-150",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "Truck"
+    },
+    {
+      id: 4,
+      name: "Chevrolet Silverado",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Truck"
+    },
+    {
+      id: 5,
+      name: "Nissan Altima",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2020,
+      type: "Sedan"
+    },
+    {
+      id: 6,
+      name: "Hyundai Elantra",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "Sedan"
+    },
+    {
+      id: 7,
+      name: "Kia Sorento",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 8,
+      name: "Mazda CX-5",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "SUV"
+    },
+    {
+      id: 9,
+      name: "Subaru Outback",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Wagon"
+    },
+    {
+      id: 10,
+      name: "Volkswagen Jetta",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "Sedan"
+    },
+    {
+      id: 11,
+      name: "BMW 3 Series",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Sedan"
+    },
+    {
+      id: 12,
+      name: "Mercedes-Benz C-Class",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "Sedan"
+    },
+    {
+      id: 13,
+      name: "Audi Q5",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 14,
+      name: "Jeep Wrangler",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "SUV"
+    },
+    {
+      id: 15,
+      name: "Tesla Model 3",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "Sedan"
+    },
+    {
+      id: 16,
+      name: "Chevrolet Equinox",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 17,
+      name: "Toyota RAV4",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "SUV"
+    },
+    {
+      id: 18,
+      name: "Honda CR-V",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 19,
+      name: "Ford Escape",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "SUV"
+    },
+    {
+      id: 20,
+      name: "GMC Sierra",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Truck"
+    }
+  ];
+
+  const vehicleOptions = vehicles.map(vehicle => ({
+    value: vehicle.name,
+    label: `${vehicle.year} ${vehicle.name} (${vehicle.type})`
+  }));
+
   const MobileView = () => (
     <div className="flex flex-col w-full gap-4">
       {/* Mobile Header */}
@@ -195,7 +344,7 @@ const Page = ({ params }) => {
           backgroundPosition: "center", // Center the image
         }}
       >
-        <div className="h-full w-full absolute top-0 left-0"></div>
+        <div className="overlay bg-[#00000080] h-full w-full absolute top-0 left-0"></div>
       </div>
       {/* Mobile Sidebar */}
       <div className="bg-white p-4 shadow-md">
@@ -218,16 +367,12 @@ const Page = ({ params }) => {
       <div>
         <div className="mb-4">
           <Select
-            id="category-select"
+            id="vehicle-select"
             className="basic-single"
             classNamePrefix="select"
-            value={{ value: selectedCategory, label: selectedCategory }}
+            value={vehicleOptions.find(option => option.value === selectedCategory)}
             onChange={(e) => setSelectedCategory(e.value)}
-            options={supplier?.subCategory
-              ? Object.entries(supplier.subCategory)
-                .sort((a, b) => a[1].position - b[1].position)
-                .map(([key]) => ({ value: key, label: key }))
-              : []}
+            options={vehicleOptions}
             styles={customSelectStyles2}
           />
         </div>
@@ -263,7 +408,7 @@ const Page = ({ params }) => {
           height: "30vh",
         }}
       >
-        <div className="h-full w-full"></div>
+        <div className="overlay bg-[#00000080] h-full w-full"></div>
       </div>
 
       <div className="flex flex-col-reverse md:flex-row flex-wrap md:flex-nowrap w-10/12 mx-auto gap-8">
@@ -290,15 +435,9 @@ const Page = ({ params }) => {
         <div className="w-2/3">
           <div className="mt-6">
             <Select
-              value={{ value: selectedCategory, label: selectedCategory }}
+              value={vehicleOptions.find(option => option.value === selectedCategory)}
               onChange={(e) => setSelectedCategory(e.value)}
-              options={
-                supplier?.subCategory
-                  ? Object.entries(supplier.subCategory)
-                    .sort((a, b) => a[1].position - b[1].position)
-                    .map(([key]) => ({ value: key, label: key }))
-                  : []
-              }
+              options={vehicleOptions}
               styles={customSelectStyles}
             />
           </div>
@@ -320,8 +459,8 @@ const Page = ({ params }) => {
     </>
   );
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!supplier) return <p>Supplier not found.</p>;
+  // if (isLoading) return <p>Loading...</p>;
+  // if (!supplier) return <p>Supplier not found.</p>;
 
   return isMobileView ? <MobileView /> : <DesktopView />;
 };

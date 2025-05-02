@@ -36,6 +36,150 @@ const fetchSuppliers = async () => {
     }
 };
 
+// Hardcoded vehicle list
+const vehicles = [
+    {
+      id: 1,
+      name: "Toyota Camry",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Sedan"
+    },
+    {
+      id: 2,
+      name: "Honda Civic",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "Sedan"
+    },
+    {
+      id: 3,
+      name: "Ford F-150",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "Truck"
+    },
+    {
+      id: 4,
+      name: "Chevrolet Silverado",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Truck"
+    },
+    {
+      id: 5,
+      name: "Nissan Altima",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2020,
+      type: "Sedan"
+    },
+    {
+      id: 6,
+      name: "Hyundai Elantra",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "Sedan"
+    },
+    {
+      id: 7,
+      name: "Kia Sorento",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 8,
+      name: "Mazda CX-5",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "SUV"
+    },
+    {
+      id: 9,
+      name: "Subaru Outback",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Wagon"
+    },
+    {
+      id: 10,
+      name: "Volkswagen Jetta",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "Sedan"
+    },
+    {
+      id: 11,
+      name: "BMW 3 Series",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Sedan"
+    },
+    {
+      id: 12,
+      name: "Mercedes-Benz C-Class",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "Sedan"
+    },
+    {
+      id: 13,
+      name: "Audi Q5",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 14,
+      name: "Jeep Wrangler",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "SUV"
+    },
+    {
+      id: 15,
+      name: "Tesla Model 3",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "Sedan"
+    },
+    {
+      id: 16,
+      name: "Chevrolet Equinox",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 17,
+      name: "Toyota RAV4",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2021,
+      type: "SUV"
+    },
+    {
+      id: 18,
+      name: "Honda CR-V",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "SUV"
+    },
+    {
+      id: 19,
+      name: "Ford Escape",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2023,
+      type: "SUV"
+    },
+    {
+      id: 20,
+      name: "GMC Sierra",
+      imageUrl: "https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg",
+      year: 2022,
+      type: "Truck"
+    }
+  ];
+
 const LatestNews = () => {
     const [visibleRows, setVisibleRows] = useState(20);
     const [blogs, setBlogs] = useState([]);
@@ -184,8 +328,58 @@ const LatestNews = () => {
                     </div>
                 </div>
 
-                {/* Testimonial Section */}
-                {/* Add your testimonials here */}
+                {/* Vehicle sections as needed */}
+               
+                <div className="w-10/12 mx-auto">
+                <h3 className="text-2xl font-bold mb-8 text-center">Popular Vehicles</h3>
+                    <Swiper
+                        modules={[Autoplay, Pagination]}
+                        spaceBetween={6}
+                        slidesPerView={2}
+                        pagination={{ clickable: true }}
+                        autoplay={{
+                            delay: 3000,
+                            disableOnInteraction: false,
+                        }}
+                        breakpoints={{
+                            640: {
+                                slidesPerView: 3,
+                                spaceBetween: 10,
+                            },
+                            768: {
+                                slidesPerView: 4,
+                                spaceBetween: 20,
+                            },
+                            1024: {
+                                slidesPerView: 6,
+                                spaceBetween: 30,
+                            },
+                            1280: {
+                                slidesPerView: 6,
+                                spaceBetween: 30,
+                            },
+                        }}>
+                        {vehicles.map(vehicle => (
+                            <SwiperSlide key={vehicle.id} className="py-2 h-full">
+                                <div className='bg-white shadow-md rounded-lg h-full flex flex-col items-center'>
+                                    <img src={vehicle.imageUrl} alt={vehicle.name} className="w-full h-32 object-cover mb-2 rounded-t" />
+                                    <h4 className="text-md font-semibold mb-1 text-center">{vehicle.name}</h4>
+                                    <p className="text-xs text-gray-500">{vehicle.year} • {vehicle.type}</p>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                    {visibleRows < suppliers.length && (
+                                <div className="text-center mt-4">
+                                    <button
+                                        className="px-4 mt-6 py-2 text-white bg-[#b12b29] text-xs rounded"
+                                        onClick={() => router.push('/suppliers')}
+                                    >
+                                        View All
+                                    </button>
+                                </div>
+                            )}
+                </div>
             </div>
         </section>
     );
