@@ -57,12 +57,14 @@ const SuppliersPage = () => {
   function stringToSlug(str) {
     str = str.replace("&", "and");
     str = str.replace(/,/g, "~");
+    str = str.replace(/-/g, "+");
     return str
       .toLowerCase()
       .trim()
       .replace(/[^a-z0-9 -~]/g, "")
       .replace(/\s+/g, "-")
-      .replace(/--+/g, "-");
+      .replace(/--+/g, "-")
+      .replace(/\//g, "_");
   }
 
   const handleFilter = (heading) => {
@@ -104,7 +106,7 @@ const SuppliersPage = () => {
         {error && <p className="text-center text-red-500">Error: {error}</p>}
         
         {/* Mobile Dropdown */}
-        <div className="block md:hidden mb-6">
+        {/* <div className="block md:hidden mb-6">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="border-[#b12b29] text-[#b12b29] px-2 py-1 rounded-md w-fit text-xs flex gap-3 items-center"
@@ -127,10 +129,10 @@ const SuppliersPage = () => {
               ))}
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Desktop Filters */}
-        <div className="hidden md:flex justify-between gap-4 pb-6 text-sm">
+        {/* <div className="hidden md:flex justify-between gap-4 pb-6 text-sm">
           <button onClick={() => handleFilter("All")} className="bg-[#b12b29] text-white px-2 py-2 rounded-md w-full">
             All
           </button>
@@ -139,7 +141,7 @@ const SuppliersPage = () => {
               {cat}
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* Suppliers Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 cursor-pointer">

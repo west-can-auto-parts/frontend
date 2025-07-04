@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { useRouter, usePathname } from 'next/navigation';
 
-export const ModelList = ({ modelList = [] }) => {
+export const ModelList = ({ modelList = [],vehicleName }) => {
     const [selectedModel, setSelectedModel] = useState(null);
     const router = useRouter();
     const pathname = usePathname();
@@ -20,16 +20,17 @@ export const ModelList = ({ modelList = [] }) => {
         }
     }, [pathname, modelList]);
 
-    const stringToSlug = (str) => {
-        if (!str) return '';
-        return str
-            .toLowerCase()
-            .trim()
-            .replace(/[^a-z0-9 -]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/--+/g, '-');
-    };
-
+   function stringToSlug(str) {
+    str = str.replace(/&/g, "and");         // Replace all "&" with "and"
+    str = str.replace(/\//g, "_");          // Replace all "/" with "_"
+    str = str.replace(/,/g, "~");
+    return str
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -~]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/--+/g, "-");
+  }
     const handleModelClick = (modelName) => {
         setSelectedModel(modelName);
         const vehicleName = pathname.split('/model/')[1].split('-')[0];
@@ -38,7 +39,7 @@ export const ModelList = ({ modelList = [] }) => {
 
     return (
         <div className="border-b-2 px-6 py-6 bg-red-800 text-white border-b-white shadow-sm">
-            <h3 className="text-sm font-semibold mb-4">All Models</h3>
+            <h3 className="text-sm font-bold mb-4">All {vehicleName?.toUpperCase()} Models</h3>
 
             {/* Desktop View - hidden on mobile */}
             <div className="hidden sm:block">
@@ -74,11 +75,10 @@ const DesktopView = ({ modelList, selectedModel, handleModelClick }) => (
         {modelList.map((modelName) => (
             <li
                 key={modelName}
-                className={`cursor-pointer p-1 rounded text-sm ${
-                    modelName === selectedModel
+                className={`cursor-pointer p-1 rounded text-sm ${modelName === selectedModel
                         ? 'font-bold text-white'
                         : 'hover:bg-white hover:text-red-800'
-                }`}
+                    }`}
                 onClick={() => handleModelClick(modelName)}
             >
                 {modelName}
@@ -101,9 +101,8 @@ const MobileView = ({ modelList, selectedModel, handleModelClick }) => {
                     {selectedModel || "Select a Model"}
                 </span>
                 <FaChevronDown
-                    className={`h-3 w-3 text-red-800 transition-transform ${
-                        isDropdownOpen ? "rotate-180" : ""
-                    }`}
+                    className={`h-3 w-3 text-red-800 transition-transform ${isDropdownOpen ? "rotate-180" : ""
+                        }`}
                 />
             </button>
 
@@ -112,11 +111,10 @@ const MobileView = ({ modelList, selectedModel, handleModelClick }) => {
                     {modelList.map((modelName) => (
                         <li
                             key={modelName}
-                            className={`py-2 px-4 text-sm cursor-pointer ${
-                                modelName === selectedModel
+                            className={`py-2 px-4 text-sm cursor-pointer ${modelName === selectedModel
                                     ? "bg-white text-red-800 font-bold"
                                     : "text-white hover:bg-white hover:text-red-800"
-                            }`}
+                                }`}
                             onClick={() => {
                                 handleModelClick(modelName);
                                 setIsDropdownOpen(false);

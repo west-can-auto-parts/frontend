@@ -11,18 +11,23 @@ const Page = ({ params }) => {
   const [model, setModel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [subCategories, setSubCategories] = useState([]);
-  const [subCategoryList, setSubCategoryList] = useState([]);
   const [modelList, setModelList] = useState([]);
   const [vehicle, setVehicle] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [imageUrl, setImageUrl] = useState('');
-
+  const [myProduct, setMyProduct] = useState(null);
+  const [subCategoryList, setSubCategoryList] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]); // Add new state for products
 
   const isProduction = process.env.NODE_ENV === "production";
   const apiBaseUrl = isProduction
     ? "https://clientsidebackend.onrender.com/api"
     : "http://localhost:8080/api";
+
+  const apiUrl1 = isProduction
+  ? "https://clientsidebackend.onrender.com/"
+  : "http://localhost:8080/";
+  const apiUrl = apiUrl1 + "api/product";
 
   const router = useRouter();
   function stringToSlug(str) {
@@ -60,7 +65,7 @@ const Page = ({ params }) => {
       .join(' ');
   };
 
-  const slug = removeVehicleName(params.modelName);
+  const slug = params.modelName;
   const vehicleName = getVehicleName(params.modelName);
 
   const fetchModel = async (modelName) => {
@@ -70,31 +75,6 @@ const Page = ({ params }) => {
       if (!modelRes.ok) throw new Error("Model not found");
       const modelData = await modelRes.json();
       setModel(modelData);
-
-      // Convert subCategoryAndProduct object to array for easier rendering
-      if (modelData.subCategoryAndProduct) {
-        const categories = Object.entries(modelData.subCategoryAndProduct).map(
-          ([categoryName, products]) => ({
-            name: categoryName,
-            products
-          })
-        );
-        setSubCategories(categories);
-        const categoryNames = Object.keys(modelData.subCategoryAndProduct).map(name => ({
-          name,
-          slug: stringToSlug(name)
-        }));
-        setSubCategoryList(categoryNames);
-
-        // Set first subcategory as selected by default
-        if (categories.length > 0) {
-          setSelectedCategory({ name: categories[0].name, slug: stringToSlug(categories[0].name) });
-        } else {
-          setSelectedCategory(null);
-        }
-      } else {
-        setSelectedCategory(null);
-      }
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -143,19 +123,39 @@ const Page = ({ params }) => {
   }, [vehicleName, vehicle]);
 
   useEffect(() => {
-    const fetchImage = async () => {
-      const res = await fetch(`/api/getImage?vehicle=${vehicleName}&model=${params.modelName}`);
-      const data = await res.json();
-      setImageUrl(data.imageUrl);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const allSubCategoryRes = await fetch(`${apiUrl}/subcategory`);
+        const allSubCategoryText = await allSubCategoryRes.text();
+        if (!allSubCategoryText) throw new Error("Empty subcategories response");
+        const allSubCategoryData = JSON.parse(allSubCategoryText);
+        console.log("Fetched subcategories:", allSubCategoryData);
+        setSubCategoryList(allSubCategoryData);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchImage();
-  }, [vehicleName, params.modelName]);
+    fetchData();
+  }, [slug]);
+
+  // Add this after the subCategoryList state is populated
+  useEffect(() => {
+    if (subCategoryList.length > 0 && !selectedCategory) {
+      // Select the first category as default
+      const defaultCategory = subCategoryList[0];
+      handleCategorySelect({
+        ...defaultCategory,
+        products: [] // This will be populated by the RelatedSubCategory component
+      });
+    }
+  }, [subCategoryList]);
 
   // Handler for subcategory selection
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-  };
 
   const handleClick = (listing, category) => {
     const categorySlug =
@@ -176,69 +176,71 @@ const Page = ({ params }) => {
     ? subCategories.filter(category => category.name === selectedCategory.name)
     : subCategories;
 
-  return (
-    <>
-      <div className="w-10/12 mx-auto py-8 flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-1/6 bg-white h-fit">
-          <div className="mb-4">
-            <ModelList modelList={modelList} />
-            <div className="mt-6">
-              <RelatedSubCategory
-                subCategories={subCategoryList}
-                onCategorySelect={handleCategorySelect}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="w-full md:w-4/5 py-2 md:py-0">
-          <div className="bg-white shadow-md p-4 rounded flex justify-center mb-6">
-           <img src={imageUrl || "/placeholder.jpg"} alt={model.name} className="h-48 object-contain" />
-          </div>
-          {/* Main content area showing products by category */}
-          {filteredCategories.map((category) => (
-            <div key={category.name} className="mb-8">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {category.products.map((product, index) => (
-                  <div
-                    key={index}
-                    className="cursor-pointer"
-                    onClick={() =>
-                      handleClick(
-                        product.name,
-                        product.categoryName
-                      )
-                    }
-                  >
-                    <div className="bg-white shadow-md rounded h-full flex flex-col group">
-                      {/* Product Image */}
-                      <img
-                        src={product.imageUrl || "/placeholder.jpg"}
-                        alt={product.name || "Product"}
-                        className="w-full h-[10vh] md:h-[15vh] object-cover object-center rounded-t"
-                      />
+    const handleCategorySelect = (categoryWithProducts) => {
+      console.log("Category selected in page:", categoryWithProducts);
+      setSelectedCategory(categoryWithProducts);
+      setSelectedProducts(categoryWithProducts.products || []);
+    };
 
-                      {/* Content Section */}
-                      <div className="flex-grow px-3 md:px-4 pt-3 md:pt-4 group-hover:bg-gray-100 transition">
-                        <p className="text-xs font-semibold mb-2 !line-clamp-2">
-                          {toCamelCase(vehicleName) + " " + toCamelCase(removeVehicleName(params.modelName)) + " " + (product.name || "Product Name")}
-                        </p>
-                      </div>
-
-                      {/* Full-width Button at Bottom */}
-                      <button className="bg-[#b12b29] text-white py-2 w-full text-sm font-semibold flex items-center px-4 rounded-b">
-                        <span>Explore</span>
-                        <FaChevronRight className="h-3 w-3 ml-auto" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+    return (
+      <>
+        <div className="w-10/12 mx-auto py-8 flex flex-col md:flex-row gap-6">
+          <div className="w-full md:w-1/6 bg-white h-fit">
+            <div className="mb-4">
+              <ModelList modelList={modelList} vehicleName={vehicleName} />
+              <div className="mt-6">
+                <RelatedSubCategory
+                  subCategories={subCategoryList}
+                  onCategorySelect={handleCategorySelect}
+                />
               </div>
             </div>
-          ))}
+          </div>
+          <div className="w-full md:w-4/5 py-2 md:py-0">
+            <div className="bg-white shadow-md rounded overflow-hidden mb-6 h-48 w-full">
+              <img src={model.bannerImageUrl || "/placeholder.jpg"} alt={model.name} className="w-full h-full object-cover" />
+            </div>
+            {/* Main content area showing products */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {selectedProducts.map((product, index) => (
+                <div
+                  key={index}
+                  className="cursor-pointer"
+                  onClick={() =>
+                    handleClick(
+                      product.name,
+                      product.categoryName
+                    )
+                  }
+                >
+                  <div className="bg-white shadow-md rounded h-full flex flex-col group">
+                    {/* Product Image */}
+                    <img
+                      src={product.imageUrl[0] || "/placeholder.jpg"}
+                      alt={product.name || "Product"}
+                      className="w-full h-[10vh] md:h-[15vh] object-cover object-center rounded-t"
+                    />
+  
+                    {/* Content Section */}
+                    <div className="flex-grow px-3 md:px-4 pt-3 md:pt-4 group-hover:bg-gray-100 transition">
+                      <p className="text-xs font-semibold mb-2 !line-clamp-2">
+                        {toCamelCase(vehicleName) + " " + toCamelCase(removeVehicleName(params.modelName)) + " " + (product.name || "Product Name")}
+                      </p>
+                    </div>
+  
+                    {/* Full-width Button at Bottom */}
+                    <button className="bg-[#b12b29] text-white py-2 w-full text-sm font-semibold flex items-center px-4 rounded-b">
+                      <span>Explore</span>
+                      <FaChevronRight className="h-3 w-3 ml-auto" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-    </>
-  );
+      </>
+    );
 };
 
 export default Page;

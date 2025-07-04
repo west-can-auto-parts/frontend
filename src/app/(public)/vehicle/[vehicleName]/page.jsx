@@ -18,8 +18,9 @@ const Page = ({ params }) => {
   const [error, setError] = useState(null);
 
   function stringToSlug(str) {
-    str=initialVehicleName+"-"+str;
-    str = str.replace("&", "and");
+    str = initialVehicleName + "-" + str;
+    str = str.replace(/&/g, "and");         // Replace all "&" with "and"
+    str = str.replace(/\//g, "_");          // Replace all "/" with "_"
     str = str.replace(/,/g, "~");
     return str
       .toLowerCase()
@@ -71,9 +72,9 @@ const Page = ({ params }) => {
     <div className="w-10/12 mx-auto py-8 flex flex-col md:flex-row gap-6">
       {/* Sidebar: 1/6 width */}
       <div className="w-full md:w-1/6 bg-red-800 p-4 rounded h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-red-800"
-      style={{
-            scrollbarWidth: 'thin',
-            scrollbarColor: '#d1d5db #7f1d1d',
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#d1d5db #7f1d1d',
         }}>
         <h2 className="text-white text-lg font-semibold mb-4 text-center">Vehicles</h2>
         <ul className="grid grid-cols-2 md:grid-cols-1 gap-1 relative">
@@ -98,12 +99,12 @@ const Page = ({ params }) => {
       <div className="w-full md:w-5/6">
         {/* Centered logo */}
         <div className="bg-white shadow-md rounded overflow-hidden mb-6 h-48 w-full">
-  <img
-    src={vehicle.bannerImageUrl}
-    alt={vehicle.name}
-    className="w-full h-full object-cover"
-  />
-</div>
+          <img
+            src={vehicle.bannerImageUrl}
+            alt={vehicle.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {vehicle.model.map((model) => (
             <div
