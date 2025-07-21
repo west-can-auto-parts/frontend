@@ -107,8 +107,6 @@ export const PartSupplier = ({ subCategoryName }) => {
           ) : null
         )}
       </div>
-
-
     </div>
   );
 };

@@ -92,7 +92,7 @@ const OnScrollNav = () => {
       category === "Replacement Parts" || category === "Fluids & Lubricants"
         ? "replacement-parts"
         : "shop-supplies";
-        const slug = stringToSlug(listing)
+    const slug = stringToSlug(listing)
     router.push(`/${categorySlug}/${slug}`);
     setShowResults(false);
   };
@@ -200,11 +200,17 @@ const OnScrollNav = () => {
               <HiLocationMarker className="h-4 w-4" />
             </Link>
           </button>
-          <button className="bg-[#b12b29] text-white px-3 py-2 rounded-md">
-            <Link href="/profile" className="flex items-center gap-2">
+          <button
+            className="bg-[#b12b29] text-white px-3 py-2 rounded-md"
+            onClick={() => {
+              const isLoggedIn = !!localStorage.getItem("jwt_token"); // or adjust to your auth method
+              router.push(isLoggedIn ? "/profile" : "/sign-in");
+            }}
+          >
+            <div className="flex items-center gap-2">
               <HiUser className="h-4 w-4 md:h-auto md:w-auto" />
               <span className="hidden md:inline">My Account</span>
-            </Link>
+            </div>
           </button>
         </div>
       </div>

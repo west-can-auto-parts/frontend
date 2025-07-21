@@ -25,7 +25,7 @@ const Footer = () => {
 
   const socialLinks = [
     { icon: FaFacebook, href: 'https://facebook.com/westcanauto' },
-    { icon: FaInstagram, href: 'https://instagram.com/westcanautoparts' },
+    { icon: FaInstagram, href: 'https://www.instagram.com/west_can_auto_parts' },
     { icon: FaWhatsapp, href: 'https://wa.me/16045948800' },
     { icon: FaLinkedin, href: 'https://www.linkedin.com/company/westcan-auto-parts/?originalSubdomain=ca' },
   ];
@@ -76,7 +76,7 @@ const Footer = () => {
       <div className="w-10/12 mx-auto flex flex-wrap md:flex-nowrap justify-between py-2">
         <p className='text-xs'>Contact Us : info@westcanauto.com</p>
         <p className='text-xs'>
-          © 2024 Copyright West Can Auto Parts | All Rights Reserved
+          © 2025 Copyright West Can Auto Parts | All Rights Reserved
         </p>
         <p className='text-xs flex gap-2 list-none'>
           Follow Us

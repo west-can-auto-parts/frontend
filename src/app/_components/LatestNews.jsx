@@ -40,7 +40,6 @@ const fetchSuppliers = async () => {
 const fetchVehicles = async () => {
     try {
         const response = await fetch(vehicleApi);
-        console.log(response);
         if (!response.ok) throw new Error("Failed to fetch vehicles");
         return response.json();
     } catch (err) {
@@ -50,7 +49,6 @@ const fetchVehicles = async () => {
 };
 
 const LatestNews = () => {
-    const [visibleRows, setVisibleRows] = useState(20);
     const [blogs, setBlogs] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [vehicles, setVehicles] = useState([]);
@@ -131,14 +129,14 @@ const LatestNews = () => {
                             spaceBetween={16}
                             slidesPerView={2}
                             grid={{
-                                rows: 2,
+                                rows: 1,
                                 fill: 'row',
                             }}
                             breakpoints={{
-                                640: { slidesPerView: 3, grid: { rows: 2 }, spaceBetween: 12 },
-                                768: { slidesPerView: 4, grid: { rows: 2 }, spaceBetween: 14 },
-                                1024: { slidesPerView: 6, grid: { rows: 2 }, spaceBetween: 16 },
-                                1280: { slidesPerView: 10, grid: { rows: 2 }, spaceBetween: 16 },
+                                640: { slidesPerView: 3, grid: { rows: 1 }, spaceBetween: 12 },
+                                768: { slidesPerView: 4, grid: { rows: 1 }, spaceBetween: 14 },
+                                1024: { slidesPerView: 6, grid: { rows: 1 }, spaceBetween: 16 },
+                                1280: { slidesPerView: 10, grid: { rows: 1 }, spaceBetween: 16 },
                             }}
                         >
                             {suppliers.slice(0, 40).map((supplier, index) =>
@@ -173,23 +171,52 @@ const LatestNews = () => {
                 </div>
 
                 {/* Vehicles */}
-                <div className="w-10/12 mx-auto mt-12">
-                    <h3 className="text-2xl font-bold mb-8 text-center">Popular Vehicles</h3>
+                {/* Vehicles */}
+                <div className="w-full py-6 md:py-12 bg-gray-100 mt-12">
+                    <div className="w-10/12 mx-auto">
+                        <h3 className="text-2xl font-bold mb-8 text-center">Popular Vehicles</h3>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-4">
-                        {vehicles.slice(0, 24).map(vehicle => (
-                            <div
-                                key={vehicle.id}
-                                className="bg-white shadow-md rounded-lg flex flex-col items-center p-2 cursor-pointer hover:shadow-lg transition"
-                                onClick={() => router.push(`/vehicle/${stringToSlug(vehicle.name)}`)}
-                            >
-                                <div
-                                    className="w-full h-24 bg-contain bg-no-repeat bg-center mb-2"
-                                    style={{ backgroundImage: `url(${vehicle.imageUrl})` }}
-                                />
-                                <h4 className="text-sm font-semibold text-center">{vehicle.name}</h4>
+                        <Swiper
+                            modules={[Autoplay, Grid]}
+                            autoplay={{ delay: 3000, disableOnInteraction: false }}
+                            spaceBetween={16}
+                            slidesPerView={2}
+                            grid={{ rows: 1, fill: 'row' }}
+                            breakpoints={{
+                                640: { slidesPerView: 3, grid: { rows: 1 }, spaceBetween: 12 },
+                                768: { slidesPerView: 4, grid: { rows: 1 }, spaceBetween: 14 },
+                                1024: { slidesPerView: 6, grid: { rows: 1 }, spaceBetween: 16 },
+                                1280: { slidesPerView: 10, grid: { rows: 1 }, spaceBetween: 16 },
+                            }}
+                        >
+                            {vehicles
+                                .filter(vehicle => vehicle.name.toUpperCase() !== "PONTIAC")
+                                .slice(0, 40)
+                                .map(vehicle => (
+                                    <SwiperSlide
+                                        key={vehicle.id}
+                                        className="bg-white shadow-md rounded-lg flex flex-col items-center p-2 cursor-pointer hover:shadow-lg transition"
+                                        onClick={() => router.push(`/vehicle/${stringToSlug(vehicle.name)}`)}
+                                    >
+                                        <div
+                                            className="w-full h-24 bg-contain bg-no-repeat bg-center mb-2"
+                                            style={{ backgroundImage: `url(${vehicle.imageUrl})` }}
+                                        />
+                                        <h4 className="text-sm font-semibold text-center">{vehicle.name}</h4>
+                                    </SwiperSlide>
+                                ))}
+                        </Swiper>
+
+                        {vehicles.filter(v => v.name.toUpperCase() !== "PONTIAC").length > 40 && (
+                            <div className="text-center mt-6">
+                                <button
+                                    className="px-4 py-2 text-white bg-[#b12b29] text-xs rounded"
+                                    onClick={() => router.push('/vehicles')}
+                                >
+                                    View All
+                                </button>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </div>

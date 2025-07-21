@@ -13,7 +13,7 @@ const SuppliersPage = () => {
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 24;
+  const itemsPerPage = 28;
 
   const isProduction = process.env.NODE_ENV === "production";
   const apiUrl = isProduction
@@ -72,21 +72,8 @@ const SuppliersPage = () => {
         {loading && <p className="text-center text-gray-600">Loading vehicles...</p>}
         {error && <p className="text-center text-red-500">Error: {error}</p>}
 
-        {/* Filter Dropdown */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {uniqueBrands.map((brand, index) => (
-            <button
-              key={index}
-              onClick={() => handleFilter(brand)}
-              className="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded"
-            >
-              {brand}
-            </button>
-          ))}
-        </div>
-
         {/* Vehicle Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 cursor-pointer">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-5 cursor-pointer">
           {currentVehicles.map((vehicle, index) => (
             <div key={index} className="bg-white p-3" onClick={() => handleVehicleClick(vehicle)}>
               <div
@@ -97,21 +84,7 @@ const SuppliersPage = () => {
             </div>
           ))}
         </div>
-
-        {/* Pagination Controls */}
-        <div className="flex justify-between items-center mt-6">
-          <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="bg-[#b12b29] text-white px-4 py-2 rounded-md disabled:opacity-50">
-            Previous
-          </button>
-          <span className="text-gray-700 text-sm">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="bg-[#b12b29] text-white px-4 py-2 rounded-md disabled:opacity-50">
-            Next
-          </button>
-        </div>
       </div>
-
       <div className="w-full md:w-1/4 flex flex-col gap-4">
         <div className="w-full text-center bg-cover bg-center rounded-md overflow-hidden shadow-md" style={{ backgroundImage: `url(https://res.cloudinary.com/dpeocx0yy/image/upload/v1726809388/pikaso_texttoimage_auto-parts-in-red-black-and-white-theme-_2_pb0jrl.jpg)` }}>
           <div className="p-8 bg-[#00000080] text-white">

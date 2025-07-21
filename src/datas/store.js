@@ -1,7 +1,7 @@
 const locations = [
     {
         id: 1,
-        name: 'West Can Auto Parts - Abbotsford',
+        name: 'West Can Auto Parts-Abbotsford',
         address: '33406 South Fraser Way Abbotsford, BC V2S 2B5',
         phone: '(604) 853-2218',
         position: [49.048, -122.300],
@@ -53,7 +53,7 @@ const locations = [
     },
     {
         id: 2,
-        name: 'West Can Auto Parts - Langley',
+        name: 'West Can Auto Parts-Langley',
         address: '20529 62 Ave Langley, BC V3A 8R4',
         phone: '(604) 530-7278',
         position: [49.1025, -122.6604],
@@ -106,7 +106,7 @@ const locations = [
     },
     {
         id: 3,
-        name: 'West Can Auto Parts - White Rock',
+        name: 'West Can Auto Parts-White Rock',
         address: '15515 24 Ave Surrey, BC V4A 2J4',
         phone: '(604) 531 8254',
         position: [49.0433, -122.793],
@@ -164,7 +164,7 @@ const locations = [
     },
     {
         id: 4,
-        name: 'West Can Auto Parts - Surrey',
+        name: 'West Can Auto Parts-Surrey',
         address: '8565 132 St Surrey, BC V3W 4N8',
         phone: '(604) 594 8800',
         position: [49.158, -122.842],
@@ -193,7 +193,7 @@ const locations = [
     },
     {
         id: 5,
-        name: 'West Can Auto Parts - Port Coquitlam',
+        name: 'West Can Auto Parts-Port Coquitlam',
         address: '2549 Kingsway Ave, Port Coquitlam, BC V3C 1T5',
         phone: '(604) 464-6677',
         position: [49.255, -122.765],
@@ -218,7 +218,7 @@ const locations = [
     },
     {
         id: 6,
-        name: 'West Can Auto Parts - Coquitlam',
+        name: 'West Can Auto Parts-Coquitlam',
         address: '820 Henderson Avenue Coquitlam, BC V3K 1P2',
         phone: '(604) 936-1466',
         position: [49.237, -122.856],
@@ -243,7 +243,7 @@ const locations = [
     },
     {
         id: 7,
-        name: 'West Can Auto Parts - Burnaby, Imperial Street',
+        name: 'West Can Auto Parts-Burnaby,Imperial Street',
         address: '5140 Imperial Street Burnaby, BC V5J 1E2',
         phone: '(604) 434-7707',
         position: [49.221, -123.003],
@@ -268,7 +268,7 @@ const locations = [
     },
     {
         id: 8,
-        name: 'West Can Auto Parts (Warehouse) - Coquitlam',
+        name: 'West Can Auto Parts (Warehouse)-Coquitlam',
         address: '91 Glacier St, Coquitlam, BC V3K 5Z1',
         position: [49.236, -122.816],
         description: 'Our comprehensive inventory flooded with a line of quality products encompasses a quality assured brand that every client searches for in the market.',
@@ -276,7 +276,7 @@ const locations = [
     },
     {
         id: 9,
-        name: 'West Can Auto Parts - Burnaby',
+        name: 'West Can Auto Parts-Burnaby',
         address: '7788 Edmonds Street Burnaby, BC V3N 1B9',
         phone: '(604) 630-7722',
         position: [49.214, -122.950],
@@ -301,7 +301,7 @@ const locations = [
     },
     {
         id: 10,
-        name: 'West Can Auto Parts - Richmond',
+        name: 'West Can Auto Parts-Richmond',
         address: '11211 Bridgeport Rd Richmond, V6X 1T3',
         phone: '(604) 276 2999',
         position: [49.190, -123.131],

@@ -11,6 +11,31 @@ import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa6";
 import { throttle } from 'lodash';
 
+// Utility to generate a consistent random color from a string (name)
+function getRandomColor(name) {
+  // List of visually distinct, pleasant background colors
+  const colors = [
+    '#F59E42', // orange
+    '#4F8A8B', // teal
+    '#A259A4', // purple
+    '#F76E6C', // red
+    '#5B8C5A', // green
+    '#3A6EA5', // blue
+    '#F7C873', // yellow
+    '#B07BAC', // violet
+    '#F4845F', // coral
+    '#6C7A89', // gray
+  ];
+  // Hash the name to a number
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  // Pick a color based on the hash
+  const color = colors[Math.abs(hash) % colors.length];
+  return color;
+}
+
 export const GoogleReviews = ({ apiKey, placeId }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +85,7 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="w-full py-6 md:py-12">
+    <div className="w-full py-1 md:py-1">
       <div className="w-10/12 mx-auto">
         <h3 className="text-2xl font-bold mb-8 text-center">Know What Our Customers Have To Say For Us</h3>
         <div className="w-full mx-auto">
@@ -102,12 +127,13 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
                     <FaQuoteRight className="w-5 h-5 ml-auto"/>
                     <div className="flex justify-between items-center mt-4">
                       <div className="flex items-center mb-2">
-                        <img
-                          src={review.photoUrl}
-                          alt={`${review.name}'s profile`}
-                          className="rounded-full w-10 h-10 mr-4 flex-shrink-0"
-                          onError={throttledImageLoad}
-                        />
+                        {/* Replace image with initial in colored circle */}
+                        <div
+                          className="rounded-full w-10 h-10 mr-4 flex-shrink-0 flex items-center justify-center text-lg font-bold"
+                          style={{ backgroundColor: getRandomColor(review.name) }}
+                        >
+                          {review.name && review.name[0].toUpperCase()}
+                        </div>
                         <div className="flex-1">
                           <div className="flex items-center mb-2">
                             {renderStars(review.rating)}

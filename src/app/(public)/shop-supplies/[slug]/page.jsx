@@ -109,7 +109,7 @@ const Page = ({ params }) => {
         <RelatedParts subCategoryName={myProduct.subCategoryName} />
       </div>
       <div className="w-full">
-        <PartSupplier subCategoryName={myProduct.name} />
+        <PartSupplier subCategoryName={myProduct} />
       </div>
 
       {showPopup && (

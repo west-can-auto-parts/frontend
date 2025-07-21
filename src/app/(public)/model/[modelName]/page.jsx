@@ -44,18 +44,15 @@ const Page = ({ params }) => {
     if (!str) return '';
     if (str.includes('-')) {
       const parts = str.split('-');
-      return parts.slice(1).join('-'); // Remove first part
+      return parts.slice(1).join('-'); 
     }
     return str;
   }
   function getVehicleName(str) {
     if (!str) return '';
-    // First split by hyphen to separate vehicle-model parts
     const hyphenParts = str.split('-');
-    // Then take the first part and split by spaces
     const firstPart = hyphenParts[0];
     const words = firstPart.split(/\s+/);
-    // Return the first word only
     return words[0] || '';
   }
   const toCamelCase = (str) => {
@@ -67,6 +64,11 @@ const Page = ({ params }) => {
 
   const slug = params.modelName;
   const vehicleName = getVehicleName(params.modelName);
+
+      const handleCategorySelect = (categoryWithProducts) => {
+      setSelectedCategory(categoryWithProducts);
+      setSelectedProducts(categoryWithProducts.products || []);
+    };
 
   const fetchModel = async (modelName) => {
     setLoading(true);
@@ -92,31 +94,27 @@ const Page = ({ params }) => {
       setVehicle(vehicleData);
 
       if (vehicleData.model && Array.isArray(vehicleData.model)) {
-        // Extract just the model names from the array of model objects
         const modelNames = vehicleData.model.map(model => model.name);
         setModelList(modelNames);
       } else {
-        setModelList([]); // Set empty array if no models found
+        setModelList([]); 
       }
     } catch (err) {
       console.error(err);
       setError(err.message);
-      setModelList([]); // Ensure modelList is empty on error
+      setModelList([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Only fetch model data when slug changes
     if (slug) {
       fetchModel(slug);
     }
   }, [slug]);
 
-  // Separate useEffect for initial vehicle data fetch
   useEffect(() => {
-    // Only fetch vehicle data if we have a vehicle name and haven't fetched it yet
     if (vehicleName && !vehicle) {
       fetchVehicleAndModels(vehicleName);
     }
@@ -130,7 +128,6 @@ const Page = ({ params }) => {
         const allSubCategoryText = await allSubCategoryRes.text();
         if (!allSubCategoryText) throw new Error("Empty subcategories response");
         const allSubCategoryData = JSON.parse(allSubCategoryText);
-        console.log("Fetched subcategories:", allSubCategoryData);
         setSubCategoryList(allSubCategoryData);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -143,19 +140,15 @@ const Page = ({ params }) => {
     fetchData();
   }, [slug]);
 
-  // Add this after the subCategoryList state is populated
   useEffect(() => {
     if (subCategoryList.length > 0 && !selectedCategory) {
-      // Select the first category as default
       const defaultCategory = subCategoryList[0];
       handleCategorySelect({
         ...defaultCategory,
-        products: [] // This will be populated by the RelatedSubCategory component
+        products: []
       });
     }
   }, [subCategoryList]);
-
-  // Handler for subcategory selection
 
   const handleClick = (listing, category) => {
     const categorySlug =
@@ -171,16 +164,9 @@ const Page = ({ params }) => {
   if (error) return <div>Error: {error}</div>;
   if (!model) return <div>Model not found</div>;
 
-  // Find the selected category's full data (with products) if selected
   const filteredCategories = selectedCategory
     ? subCategories.filter(category => category.name === selectedCategory.name)
     : subCategories;
-
-    const handleCategorySelect = (categoryWithProducts) => {
-      console.log("Category selected in page:", categoryWithProducts);
-      setSelectedCategory(categoryWithProducts);
-      setSelectedProducts(categoryWithProducts.products || []);
-    };
 
     return (
       <>
@@ -220,14 +206,12 @@ const Page = ({ params }) => {
                       alt={product.name || "Product"}
                       className="w-full h-[10vh] md:h-[15vh] object-cover object-center rounded-t"
                     />
-  
                     {/* Content Section */}
                     <div className="flex-grow px-3 md:px-4 pt-3 md:pt-4 group-hover:bg-gray-100 transition">
                       <p className="text-xs font-semibold mb-2 !line-clamp-2">
                         {toCamelCase(vehicleName) + " " + toCamelCase(removeVehicleName(params.modelName)) + " " + (product.name || "Product Name")}
                       </p>
                     </div>
-  
                     {/* Full-width Button at Bottom */}
                     <button className="bg-[#b12b29] text-white py-2 w-full text-sm font-semibold flex items-center px-4 rounded-b">
                       <span>Explore</span>

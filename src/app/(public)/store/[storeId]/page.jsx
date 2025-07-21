@@ -7,17 +7,25 @@ import Link from 'next/link';
 import { FaPhoneAlt } from 'react-icons/fa';
 
 const Page = ({ params }) => {
-  const id = params.storeId;
 
+function slugToOriginal(slug) {
+  let str = slug.replace(/Parts\+/, 'Parts-');
+  str = str.replace(/-/g, ' ');
+  str = decodeURIComponent(str.replace(/\%2B/g, '-'));
+  str = str.replace(/~/g, ',');
+  return str;
+}
+
+  const name = slugToOriginal(params.storeId);
   // Find the location data based on the ID from the URL
-  const location = locations.find((loc) => loc.id === parseInt(id));
+  const location = locations.find((loc) => loc.name === name);
 
   // Handle case when location is not found
   if (!location) {
     return (
       <main className="bg-gray-100 py-12 min-h-[90vh] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-4">Location Not Found : {id}</h1>
+          <h1 className="text-3xl font-bold mb-4">Location Not Found : {name}</h1>
           <p className="text-gray-700">The location you're looking for doesn't exist.</p>
         </div>
       </main>
@@ -25,10 +33,10 @@ const Page = ({ params }) => {
   }
 
   // State to handle dropdown selection
-  const [selectedLocationId, setSelectedLocationId] = useState(id);
+  const [selectedLocationId, setSelectedLocationId] = useState(name);
 
   // Find the selected location based on dropdown
-  const selectedLocation = locations.find((loc) => loc.id === parseInt(selectedLocationId));
+  const selectedLocation = locations.find((loc) => loc.name === selectedLocationId);
 
   return (
     <main className="bg-gray-100 py-12">
@@ -43,8 +51,8 @@ const Page = ({ params }) => {
             />
             <div className="p-6">
               <h1 className="text-3xl font-bold mb-4">{selectedLocation.name}</h1>
-              <p className="text-md text-red-800 font-bold mb-2 flex items-center"><FaLocationArrow className='mr-2'/> Address: {selectedLocation.address}</p>
-              <p className="text-md text-gray-600 mb-6 font-semibold flex items-center"><FaPhoneAlt className='mr-2'/> Contact: {selectedLocation.phone}</p>
+              <p className="text-md text-red-800 font-bold mb-2 flex items-center"><FaLocationArrow className='mr-2' /> Address: {selectedLocation.address}</p>
+              <p className="text-md text-gray-600 mb-6 font-semibold flex items-center"><FaPhoneAlt className='mr-2' /> Contact: {selectedLocation.phone}</p>
               <div>{selectedLocation.description}</div>
             </div>
           </div>
@@ -73,7 +81,7 @@ const Page = ({ params }) => {
               </a>
             </button>
             {/* <button className="bg-white text-[#b12b29] w-full px-4 py-2 flex justify-between items-center gap-1"> */}
-              {/* <Link href={`/store/${selectedLocation.id}`} className="text-center flex justify-center hover:underline w-full items-center gap-1">
+            {/* <Link href={`/store/${selectedLocation.id}`} className="text-center flex justify-center hover:underline w-full items-center gap-1">
                 View Store
               </Link> */}
             {/* </button> */}
@@ -81,7 +89,7 @@ const Page = ({ params }) => {
         </div>
       </section>
     </main>
-    
+
   );
 };
 

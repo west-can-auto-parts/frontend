@@ -15,6 +15,15 @@ const center = {
     lng: -122.70064
 };
 const StoreLocations = () => {
+    function stringToSlug(str) {
+        // First replace all spaces with hyphens
+        str = str.replace(/\s+/g, '-');
+        // Replace comma with tilde (as in original)
+        str = str.replace(/,/g, '~');
+        // Replace only the first hyphen (after "Parts") with a plus sign
+        str = str.replace(/(.*?)-/, '$1+');
+        return str.trim();
+    }
     const [selectedStore, setSelectedStore] = useState(null);
     const router = useRouter();
     const { isLoaded } = useJsApiLoader({
@@ -22,7 +31,7 @@ const StoreLocations = () => {
     });
     if (!isLoaded) return <div>Loading...</div>;
     const handleRedirect = (store) => {
-        router.push(`/store/${store.id}`); // Replace with your actual dynamic route
+        router.push(`/store/${stringToSlug(store.name)}`); // Replace with your actual dynamic route
     };
     return (
         <section className="py-4 md:py-12">

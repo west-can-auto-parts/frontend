@@ -29,7 +29,7 @@ export const RelatedSubCategory = ({ subCategories = [], onCategorySelect }) => 
       : "http://localhost:8080/api/product";
 
     try {
-      const response = await fetch(`${apiUrl}/products-category/subCategoryName/${stringToSlug(category.name)}`);
+      const response = await fetch(`${apiUrl}/products-category/subCategoryName?subCategoryName=${stringToSlug(category.name)}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch products: ${response.statusText}`);
       }

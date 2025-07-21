@@ -5,12 +5,11 @@ import { useRouter } from 'next/navigation';
 
 export const PartSupplier = ({ subCategoryName }) => {
   const [showMore, setShowMore] = useState(false);
-  const [suppliers, setSuppliers] = useState([]); // State to hold suppliers
+  const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-  // Ensure `mySubPart` is valid and has the required property
-  const currentListing = subCategoryName || "";
+
   const isProduction = process.env.NODE_ENV === 'production';
   const apiUrl = isProduction
     ? 'https://clientsidebackend.onrender.com/api/suppliers'
@@ -28,7 +27,12 @@ export const PartSupplier = ({ subCategoryName }) => {
       .replace(/\s+/g, "-")
       .replace(/--+/g, "-");
   }
-  // Fetch suppliers by product category from the backend
+
+  const handleSupplierClick = (supplier) => {
+    const brand = stringToSlug(supplier.name);
+    router.push(`/suppliers/${brand}`);
+  };
+
   useEffect(() => {
     if (!subCategoryName || !subCategoryName.brandAndPosition) return;
 
@@ -64,11 +68,6 @@ export const PartSupplier = ({ subCategoryName }) => {
     fetchSuppliers();
   }, [subCategoryName, apiUrl]);
 
-  const handleSupplierClick = (supplier) => {
-    const brand = stringToSlug(supplier.name);
-    router.push(`/suppliers/${brand}`);
-  };
-
   // Show limited suppliers on mobile, all on desktop
   const suppliersToDisplay = isMobile && !showMore ? suppliers.slice(0, 4) : suppliers.slice(0, 6);
 
@@ -91,7 +90,8 @@ export const PartSupplier = ({ subCategoryName }) => {
           View All
         </a>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4" >
+
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 cursor-pointer">
         {suppliersToDisplay.map((supplier) =>
           supplier.imageUrl ? (
             <div key={supplier.id} className="bg-white p-3">
