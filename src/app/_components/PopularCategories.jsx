@@ -170,7 +170,7 @@ const PopularCategories = () => {
                                     // Large tablets (iPad Air landscape, iPad Pro portrait)
                                     1024: { slidesPerView: 2, spaceBetween: 12 },
                                     // iPad Pro landscape and larger
-                                    1280: { slidesPerView: 3, spaceBetween: 12 },
+                                    1280: { slidesPerView: 4, spaceBetween: 12 },
                                     // Desktop
                                     1536: { slidesPerView: 4, spaceBetween: 12 },
                                 }}

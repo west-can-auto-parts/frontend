@@ -4,7 +4,7 @@ import React from 'react'
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useRouter } from 'next/navigation';
-import { Autoplay, Navigation, Pagination, Scrollbar } from 'swiper/modules';
+import { Autoplay, Pagination, Scrollbar } from 'swiper/modules';
 import { FaShoppingCart, FaMagnifyingGlass } from 'react-icons/fa';
 
 
