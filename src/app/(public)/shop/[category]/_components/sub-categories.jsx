@@ -3,7 +3,7 @@ import { FaChevronLeft, FaChevronDown, FaBackspace } from 'react-icons/fa';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-export const SubCategories = ({ myProduct,subCategory }) => {
+export const SubCategories = ({ myProduct,subCategory,categoryName }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const router = useRouter();
     const slug = decodeURIComponent(subCategory);
@@ -18,10 +18,16 @@ export const SubCategories = ({ myProduct,subCategory }) => {
     };
 
     // Handle conditional routing
-    const handleClick = (productName) => {
-        const formattedProductName = stringToSlug(productName);
-        router.push(`/product/${formattedProductName}`);
-    };
+    const handleClick = (listing) => {
+
+     const categorySlug =
+      categoryName === "Replacement Parts" || categoryName === "Fluids & Lubricants"
+        ? "replacement-parts"
+        : "shop-supplies";
+
+    const slug = stringToSlug(listing);
+    router.push(`/${categorySlug}/${slug}`);
+  };
 
     const handleDropdownToggle = () => {
         setIsDropdownOpen((prev) => !prev);

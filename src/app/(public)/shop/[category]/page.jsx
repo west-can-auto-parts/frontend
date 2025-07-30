@@ -121,12 +121,14 @@ const Page = ({ params }) => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  console.log("myProduct: ", myProduct);
+
   return (
     <>
       <div className="flex flex-col-reverse md:flex-row flex-wrap md:flex-nowrap w-10/12 mx-auto gap-8">
         <div className="w-full md:w-1/5 bg-white h-fit">
           <div className="mb-4">
-            <SubCategories myProduct={myProduct} subCategory={subCategory.name} />
+            <SubCategories myProduct={myProduct} subCategory={subCategory.name}  categoryName={myProduct?.[0]?.categoryName}/>
             <RelatedProduct subCategoryData={allSubCategory} />
             <PartTags tags={subCategory.tags || []} />
           </div>

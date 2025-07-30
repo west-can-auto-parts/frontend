@@ -20,6 +20,7 @@ const Page = ({ params }) => {
       .replace(/\s+/g, "-")
       .replace(/--+/g, "-");
   }
+  
 
   const [myProduct, setMyProduct] = useState(null);
   const [categoryType, setCategoryType] = useState("");
