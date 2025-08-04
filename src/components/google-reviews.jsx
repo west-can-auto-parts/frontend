@@ -40,15 +40,15 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const isProduction = process.env.NODE_ENV === 'production';
-  const apiUrl = isProduction
-    ? 'https://clientsidebackend.onrender.com/api/review'
-    : 'http://localhost:8080/api/review';
+  // const isProduction = process.env.NODE_ENV === 'production';
+  // const apiUrl = isProduction
+  //   ? 'https://clientsidebackend.onrender.com/api/review'
+  //   : 'http://localhost:8080/api/review';
 
-  const throttledImageLoad = throttle((e) => {
-    e.target.onerror = null; // Prevents looping
-    e.target.src = 'https://via.placeholder.com/40'; // Placeholder image URL
-  }, 1000); // Throttle to 1 second
+  // const throttledImageLoad = throttle((e) => {
+  //   e.target.onerror = null; // Prevents looping
+  //   e.target.src = 'https://via.placeholder.com/40'; // Placeholder image URL
+  // }, 1000); // Throttle to 1 second
 
   useEffect(() => {
     const fetchReviews = async () => {
