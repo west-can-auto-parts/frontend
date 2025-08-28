@@ -10,7 +10,6 @@ import { PartSupplier } from "./_components/part-supplier";
 
 const Page = ({ params }) => {
   const slug = params.slug;
-  console.log('Slug: ', slug)
 
   function stringToSlug(str) {
     str = str.replace("&", "and");
@@ -111,7 +110,7 @@ const Page = ({ params }) => {
         <RelatedParts subCategoryName={myProduct.subCategoryName} />
       </div>
       <div className="w-full">
-        <PartSupplier subCategoryName={myProduct} />
+        <PartSupplier subCategory={myProduct.brandAndPosition} />
       </div>
 
       {showPopup && (

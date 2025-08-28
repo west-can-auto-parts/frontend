@@ -126,7 +126,6 @@ export const ProductDescription = ({ myProduct }) => {
             setFormError('An error occurred while submitting the enquiry.');
         }
     };
-    console.log(isHovering)
 
     return (
         <div className="w-full md:w-1/2">

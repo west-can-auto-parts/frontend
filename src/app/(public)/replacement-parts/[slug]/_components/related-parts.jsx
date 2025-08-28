@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useRouter } from 'next/navigation';
-import { Autoplay, Pagination, Scrollbar } from 'swiper/modules';
+import { Autoplay, Pagination, Scrollbar,Navigation } from 'swiper/modules';
 import { FaShoppingCart, FaMagnifyingGlass } from 'react-icons/fa';
 
 
@@ -38,7 +38,7 @@ export const RelatedParts = ({ subCategoryName }) => {
     useEffect(() => {
         const fetchRelatedProducts = async () => {
             try {
-                const encodedSubCategoryName = encodeURIComponent(subCategoryName);
+                const encodedSubCategoryName = stringToSlug(subCategoryName);
                 const response = await fetch(`${apiUrl}/products-category/subCategoryName?subCategoryName=${encodedSubCategoryName}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch related products');
