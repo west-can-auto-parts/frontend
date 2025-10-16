@@ -22,7 +22,7 @@ export async function getCached<T>(
 }
 
 export function makeKey(pathname: string, searchParams: URLSearchParams) {
-  const sorted = new URLSearchParams([...searchParams].sort());
+  const sorted = new URLSearchParams(Array.from(searchParams).sort());
   const query = sorted.toString();
   return `api:${pathname}${query ? `?${query}` : ""}`;
 }
@@ -33,7 +33,7 @@ export async function tagKey(key: string, tags: string[]) {
 
 export async function invalidateTags(tags: string[]) {
   const keysPerTag = await Promise.all(
-    tags.map((t) => redis.smembers<string>(`tag:${t}`))
+    tags.map((t) => redis.smembers(`tag:${t}`) as Promise<string[]>)
   );
   const keys = keysPerTag.flat().filter(Boolean);
   if (keys.length) {
