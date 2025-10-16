@@ -8,10 +8,7 @@ import { ClipLoader } from 'react-spinners';
 import { useRouter } from 'next/navigation';
 import { Autoplay, Pagination } from 'swiper/modules';
 
-const isProduction = process.env.NODE_ENV === 'production';
-const apiUrl = isProduction
-  ? 'https://clientsidebackend.onrender.com/api/product'
-  : 'http://localhost:8080/api/product';
+const apiUrl = '/api/product';
 
 // Fetch products and sort based on bestSellerPosition
 const fetchProducts = async () => {

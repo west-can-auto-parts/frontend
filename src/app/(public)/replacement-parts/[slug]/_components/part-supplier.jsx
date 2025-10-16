@@ -17,10 +17,7 @@ export const PartSupplier = ({ subCategory }) => {
     }
   }, []);
 
-  const isProduction = process.env.NODE_ENV === "production";
-  const apiUrl = isProduction
-    ? "https://clientsidebackend.onrender.com/api/suppliers"
-    : "http://localhost:8080/api/suppliers";
+  const apiUrl = "/api/suppliers";
 
   const router = useRouter();
 

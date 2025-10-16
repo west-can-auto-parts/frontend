@@ -29,10 +29,7 @@ const Page = ({ params }) => {
   const [error, setError] = useState(null);
   const [productId, setProductId] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-  const isProduction = process.env.NODE_ENV === "production";
-  const apiUrl = isProduction
-    ? "https://clientsidebackend.onrender.com/api/product"
-    : "http://localhost:8080/api/product";
+  const apiUrl = "/api/product";
 
   useEffect(() => {
     const fetchProduct = async () => {

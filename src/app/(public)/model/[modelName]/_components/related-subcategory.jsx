@@ -24,9 +24,7 @@ export const RelatedSubCategory = ({ subCategories = [], onCategorySelect }) => 
     
     // Fetch products for the selected category
     const isProduction = process.env.NODE_ENV === "production";
-    const apiUrl = isProduction
-      ? "https://clientsidebackend.onrender.com/api/product"
-      : "http://localhost:8080/api/product";
+    const apiUrl = "/api/product";
 
     try {
       const response = await fetch(`${apiUrl}/products-category/subCategoryName?subCategoryName=${stringToSlug(category.name)}`);

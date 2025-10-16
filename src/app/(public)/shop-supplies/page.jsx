@@ -5,9 +5,7 @@ import { ProductCards } from "./_components/product-cards";
 import { PageHeading } from "@/components/page-heading";
 
 const isProduction = process.env.NODE_ENV === 'production';
-const apiUrl = isProduction
-  ? 'https://clientsidebackend.onrender.com/api/product'
-  : 'http://localhost:8080/api/product';
+const apiUrl = '/api/product';
 
 const Page = () => {
   const [categories, setCategories] = useState([]);

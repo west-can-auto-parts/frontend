@@ -19,10 +19,7 @@ const SuppliersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24; // Adjust as needed
 
-  const isProduction = process.env.NODE_ENV === "production";
-  const apiUrl = isProduction
-    ? "https://clientsidebackend.onrender.com/api/suppliers/all"
-    : "http://localhost:8080/api/suppliers/all";
+  const apiUrl = "/api/suppliers/all";
 
   useEffect(() => {
     const fetchSuppliers = async () => {
