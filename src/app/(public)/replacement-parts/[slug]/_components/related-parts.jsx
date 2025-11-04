@@ -19,7 +19,10 @@ export const RelatedParts = ({ subCategoryName }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const router = useRouter();
-    const apiUrl = '/api/product';
+    const isProduction = process.env.NODE_ENV === 'production';
+    const apiUrl = isProduction
+        ? 'https://clientsidebackend.onrender.com/api/product'
+        : 'http://localhost:8080/api/product';
 
     function stringToSlug(str) {
         str = str.replace("&", "and");

@@ -29,7 +29,10 @@ const HeaderMenu = () => {
     const [isMouseInsideSubCategory, setIsMouseInsideSubCategory] = useState(false);
     const [isMouseInsideProducts, setIsMouseInsideProducts] = useState(false);
     const dropdownRef = useRef(null);
-    const apiBaseUrl = '/api/product/shop-by-category';
+    const isProduction = process.env.NODE_ENV === 'production';
+    const apiBaseUrl = isProduction
+      ? 'https://clientsidebackend.onrender.com/api/product/shop-by-category'
+      : 'http://localhost:8080/api/product/shop-by-category';
 
     // const apiBaseUrl = "/api/product/shop-by-category";
 

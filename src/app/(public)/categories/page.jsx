@@ -12,7 +12,10 @@ const Page = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [expandedCategory, setExpandedCategory] = useState(null);
     const [showAllCategories, setShowAllCategories] = useState(false);
-    const apiUrl = '/api/product';
+    const isProduction = process.env.NODE_ENV === 'production';
+    const apiUrl = isProduction
+        ? 'https://clientsidebackend.onrender.com/api/product'
+        : 'http://localhost:8080/api/product';
 
     // Fetch categories on mount
     useEffect(() => {

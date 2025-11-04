@@ -7,7 +7,10 @@ import locations from '@/datas/store';
 import Select from "react-select";
 import { useRouter } from 'next/navigation';
 
-    const apiUrl = '/api/product';
+    const isProduction = process.env.NODE_ENV === 'production';
+const apiUrl = isProduction
+    ? 'https://clientsidebackend.onrender.com/api/product'
+    : 'http://localhost:8080/api/product';
 
 export const ProductDescription = ({ myProduct }) => {
     const [product, setProduct] = useState(myProduct || {});
