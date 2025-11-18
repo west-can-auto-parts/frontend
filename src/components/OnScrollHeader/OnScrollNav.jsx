@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { Logo } from "../Logo";
 import { useRouter } from "next/navigation";
 import { HiLocationMarker, HiUser } from "react-icons/hi";
 import { FaMagnifyingGlass } from "react-icons/fa6";
@@ -129,11 +130,7 @@ const OnScrollNav = () => {
       <div className="w-11/12 mx-auto flex items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/">
-          <img
-            src="https://westcanauto.com/wp-content/uploads/2023/05/WestCanAP_logoNOUSI-300x156.png"
-            alt="Logo"
-            className="w-[75px] lg:w-[100px]"
-          />
+          <Logo className="w-[75px] lg:w-[100px] h-auto" priority />
         </Link>
 
         {/* Search Bar */}

@@ -2,6 +2,7 @@ import React from 'react';
 import { FaFacebook, FaInstagram, FaWhatsapp, FaLinkedin } from 'react-icons/fa';
 import Link from 'next/link';
 import { NewsletterForm } from './news-letter-form';
+import { Logo } from './Logo';
 const Footer = () => {
   const quickLinks = [
     { name: 'Shop All', href: '/categories' },
@@ -35,14 +36,9 @@ const Footer = () => {
       <div className='w-10/12 mx-auto'>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-6'>
           <div className='col-span-1 mb-4 flex items-center'>
-           <Link href={`/`}>
-           <img
-              src="https://westcanauto.com/wp-content/uploads/2023/05/WestCanAP_logoNOUSI-300x156.png"
-              alt="WestCan Auto Logo"
-              className='w-full md:w-1/2 pb-4'
-            />
-           </Link>
-            
+            <Link href={`/`}>
+              <Logo className='w-full md:w-1/2 pb-4 h-auto' />
+            </Link>
           </div>
 
           <div className='col-span-1 mb-4'>

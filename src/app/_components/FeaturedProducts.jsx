@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { FaCartShopping } from 'react-icons/fa6';
-import { ClipLoader } from 'react-spinners';
 import { useRouter } from 'next/navigation';
 import { Autoplay, Pagination } from 'swiper/modules';
 
@@ -12,6 +11,28 @@ const isProduction = process.env.NODE_ENV === 'production';
 const apiUrl = isProduction
   ? 'https://clientsidebackend.onrender.com/api/product'
   : 'http://localhost:8080/api/product';
+
+const SKELETON_COUNT = 4;
+
+const ProductSkeleton = () => (
+  <div className="w-full md:flex-1 min-w-0 bg-white shadow-md rounded flex flex-col animate-pulse">
+    <div className="w-full h-[12vh] bg-gray-200 rounded mb-4" />
+    <div className="p-3 space-y-2">
+      <div className="h-4 bg-gray-200 rounded w-3/4" />
+      <div className="h-3 bg-gray-200 rounded w-full" />
+      <div className="h-3 bg-gray-200 rounded w-5/6" />
+      <div className="h-8 bg-gray-200 rounded w-1/2 mt-4" />
+    </div>
+  </div>
+);
+
+const SkeletonGrid = () => (
+  <div className="flex flex-col md:flex-row gap-2 md:gap-4 py-2 md:py-4 justify-center w-full items-stretch overflow-x-auto">
+    {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+      <ProductSkeleton key={index} />
+    ))}
+  </div>
+);
 
 // Fetch products and sort based on bestSellerPosition
 const fetchProducts = async () => {
@@ -110,38 +131,38 @@ const FeaturedProducts = () => {
           <p className="text-lg md:text-2xl font-bold pb-4">Our Best Selling Products</p>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <ClipLoader size={50} color={"#b21b29"} loading={loading} />
-          </div>
-        ) : autoParts.length <= 8 ? (
-          <div className="flex flex-col md:flex-row gap-2 md:gap-4 py-2 md:py-4 justify-center w-full items-stretch overflow-x-auto">
-            {autoParts.map(product => renderProductCard(product))}
-          </div>
-        ) : (
-          <Swiper
-            modules={[Autoplay, Pagination]}
-            spaceBetween={6}
-            slidesPerView={2}
-            pagination={{ clickable: true }}
-            autoplay={{
-              delay: 3000,
-              disableOnInteraction: false,
-            }}
-            breakpoints={{
-              640: { slidesPerView: 2, spaceBetween: 6 },
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 4 },
-              1280: { slidesPerView: 8 },
-            }}
-          >
-            {autoParts.map(product => (
-              <SwiperSlide key={product._id} className="py-4 h-full">
-                {renderProductCard(product)}
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        )}
+        <div className="min-h-[280px]">
+          {loading ? (
+            <SkeletonGrid />
+          ) : autoParts.length <= 8 ? (
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4 py-2 md:py-4 justify-center w-full items-stretch overflow-x-auto">
+              {autoParts.map(product => renderProductCard(product))}
+            </div>
+          ) : (
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              spaceBetween={6}
+              slidesPerView={2}
+              pagination={{ clickable: true }}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              breakpoints={{
+                640: { slidesPerView: 2, spaceBetween: 6 },
+                768: { slidesPerView: 3 },
+                1024: { slidesPerView: 4 },
+                1280: { slidesPerView: 8 },
+              }}
+            >
+              {autoParts.map(product => (
+                <SwiperSlide key={product._id} className="py-4 h-full">
+                  {renderProductCard(product)}
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
+        </div>
       </div>
     </section>
   );

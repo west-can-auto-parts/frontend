@@ -10,6 +10,7 @@ import HeaderMenu from './HeaderMenu'
 import OnScrollHeader from '../OnScrollHeader/OnScrollNav'
 import { BiUser } from 'react-icons/bi';
 import { UserButton } from './_components/user-button'
+import { Logo } from '../Logo'
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -194,7 +195,8 @@ const MainContent = () => {
           </div>
           <div className="image-container">
             <Link href={'/'}>
-              <img src="https://westcanauto.com/wp-content/uploads/2023/05/WestCanAP_logoNOUSI-300x156.png" alt="Logo" className='w-[75px] lg:w-[125px]' /></Link>
+              <Logo className='w-[75px] lg:w-[125px] h-auto' priority />
+            </Link>
           </div>
           <div className='hidden md:flex gap-2 items-center h-fit'>
             <form className="relative" ref={searchBoxRef} onSubmit={handleSearchSubmit}>

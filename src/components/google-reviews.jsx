@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -9,7 +8,6 @@ import 'swiper/css/autoplay'
 import { Pagination, Autoplay } from "swiper/modules";
 import { FaStar, FaStarHalfAlt } from "react-icons/fa";
 import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa6";
-import { throttle } from 'lodash';
 
 // Utility to generate a consistent random color from a string (name)
 function getRandomColor(name) {
@@ -36,6 +34,34 @@ function getRandomColor(name) {
   return color;
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+const apiUrl = isProduction
+  ? 'https://clientsidebackend.onrender.com/api/review'
+  : 'http://localhost:8080/api/review';
+
+const ReviewSkeleton = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {Array.from({ length: 3 }).map((_, index) => (
+      <div key={index} className="bg-white rounded-lg shadow-md p-4 h-[250px] animate-pulse flex flex-col justify-between">
+        <div className="h-4 bg-gray-200 rounded w-1/3" />
+        <div className="space-y-3">
+          <div className="h-3 bg-gray-200 rounded w-full" />
+          <div className="h-3 bg-gray-200 rounded w-5/6" />
+          <div className="h-3 bg-gray-200 rounded w-2/3" />
+          <div className="h-3 bg-gray-200 rounded w-1/2" />
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-full bg-gray-200" />
+            <div className="h-3 bg-gray-200 rounded w-16" />
+          </div>
+          <div className="h-3 bg-gray-200 rounded w-20" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export const GoogleReviews = ({ apiKey, placeId }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +78,8 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
 
   useEffect(() => {
     const fetchReviews = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const response = await fetch(`${apiUrl}/getAllReviews`);
         const data = await response.json();
@@ -81,16 +109,21 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
     );
   };
 
-  if (loading) return <p>Loading reviews...</p>;
-  if (error) return <p>{error}</p>;
-
   return (
     <div className="w-full py-1 md:py-1">
       <div className="w-10/12 mx-auto">
         <h3 className="text-2xl font-bold mb-8 text-center">Know What Our Customers Have To Say For Us</h3>
-        <div className="w-full mx-auto">
-          {reviews.length === 0 ? (
-            <p>No reviews available.</p>
+        <div className="w-full mx-auto min-h-[320px]">
+          {loading ? (
+            <ReviewSkeleton />
+          ) : error ? (
+            <div className="flex items-center justify-center h-full">
+              <p>{error}</p>
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="flex items-center justify-center h-full">
+              <p>No reviews available.</p>
+            </div>
           ) : (
             <Swiper
               modules={[Pagination, Autoplay]}
