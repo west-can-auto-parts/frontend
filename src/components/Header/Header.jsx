@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { FaMagnifyingGlass, FaBars, FaCar, FaHeart, FaPersonCircleCheck, FaCartShopping, FaXmark, FaWhatsapp, FaChevronRight } from 'react-icons/fa6';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -30,7 +30,6 @@ const MainContent = () => {
   const [showNavbar, setShowNavbar] = useState(false);
   const [prevScrollY, setPrevScrollY] = useState(0);
   const searchBoxRef = useRef(null);
-  const searchDebounceRef = useRef(null);
 
   const router = useRouter()
 
@@ -54,7 +53,7 @@ const MainContent = () => {
     setIsMenuOpen(prev => !prev);
   };
 
-  const fetchSearchResults = useCallback(async (query) => {
+  const handleSearch = async (query) => {
     if (query.length < 3) {
       setSearchResults(null);
       setShowResults(false);
@@ -78,14 +77,7 @@ const MainContent = () => {
       setSearchResults(null);
       setShowResults(false);
     }
-  }, [apiUrl]);
-
-  const triggerSearch = useCallback((query) => {
-    if (searchDebounceRef.current) {
-      clearTimeout(searchDebounceRef.current);
-    }
-    searchDebounceRef.current = setTimeout(() => fetchSearchResults(query), 300);
-  }, [fetchSearchResults]);
+  };
 
   const handleClickOutside = (event) => {
     if (searchBoxRef.current && !searchBoxRef.current.contains(event.target)) {
@@ -98,7 +90,7 @@ const MainContent = () => {
     const query = event.target.value;
     setSearchQuery(query);
     if (query.length >= 3) {
-      triggerSearch(query); // debounced
+      handleSearch(query); // Pass the query string, not the event object
     } else {
       setSearchResults([]);
       setShowResults(false);
@@ -111,7 +103,25 @@ const MainContent = () => {
     if (searchQuery.length < 3) {
       return;
     }
-    fetchSearchResults(searchQuery);
+    const slug = stringToSlug(searchQuery);
+
+    try {
+      const response = await fetch(`${apiUrl}/search?query=${(slug)}`);
+      if (!response.ok) {
+        console.error('Search API returned an error:', response.status);
+        setSearchResults(null);
+        setShowResults(false);
+        return;
+      }
+
+      const data = await response.json();
+      setSearchResults(data);
+      setShowResults(true);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      setSearchResults(null);
+      setShowResults(false);
+    }
   };
 
 
@@ -152,14 +162,6 @@ const MainContent = () => {
     // Clean up the event listener on component unmount
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (searchDebounceRef.current) {
-        clearTimeout(searchDebounceRef.current);
-      }
     };
   }, []);
 
