@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   Navigation,
   Pagination,
@@ -8,7 +8,7 @@ import {
   A11y,
   EffectFlip,
 } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from "@/components/LazySwiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -18,6 +18,18 @@ import Link from "next/link";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { CgShoppingCart } from "react-icons/cg";
 import { useRouter } from "next/navigation";
+import { useInView } from "@/hooks/useInView";
+
+function stringToSlug(str) {
+  str = str.replace("&", "and");
+  str = str.replace(/,/g, "~");
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9 -~]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/--+/g, "-");
+}
 
 const isProduction = process.env.NODE_ENV === "production";
 const apiUrl = isProduction
@@ -51,6 +63,41 @@ const CategorySkeleton = () => (
   </div>
 );
 
+const CategoryProductCard = React.memo(({ product, onClick, slug }) => (
+  <div
+    className="bg-white shadow-md rounded flex flex-col justify-between p-4 cursor-pointer h-full group transition"
+    onClick={onClick}
+  >
+    <div>
+      <img
+        src={product.images[0] || "https://via.placeholder.com/250"}
+        alt={product.name}
+        className="w-full h-[150px] md:h-[200px] lg:h-[200px] xl:h-[200px] object-contain mb-4 rounded"
+        loading="lazy"
+      />
+      <h3 className="text-sm md:text-base lg:text-lg font-semibold mb-2 text-[#b21b29] line-clamp-1">
+        {product.name}
+      </h3>
+      <p className="text-xs md:text-sm text-gray-600 mb-2 line-clamp-3">
+        {product.description}
+      </p>
+    </div>
+    <div className="flex justify-between items-center mt-4">
+      <Link
+        className="text-xs md:text-sm bg-[#b21b29] px-2 py-1 md:px-3 md:py-2 text-white rounded-md font-semibold flex gap-2 items-center hover:bg-[#9c1f24] transition"
+        href={`/shop/${slug}`}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <CgShoppingCart /> Shop Now
+      </Link>
+      <div className="group-hover:bg-[#b12b29] group-hover:text-white bg-gray-100 rounded-full flex text-lg md:text-xl items-center w-8 h-8 md:w-10 md:h-10 justify-center transition">
+        <HiMagnifyingGlass />
+      </div>
+    </div>
+  </div>
+));
+CategoryProductCard.displayName = "CategoryProductCard";
+
 const PopularCategories = () => {
   const [cats, setCats] = useState([]);
   const [subCats, setSubCats] = useState([]);
@@ -61,6 +108,9 @@ const PopularCategories = () => {
   // Create refs object to store navigation refs for each category
   const navigationRefs = useRef({});
   const [swiperInstances, setSwiperInstances] = useState({});
+  const swiperStoreRef = useRef({});
+  const sectionRef = useRef(null);
+  const sectionInView = useInView(sectionRef, { threshold: 0.15 });
 
   useEffect(() => {
     const loadData = async () => {
@@ -107,31 +157,36 @@ const PopularCategories = () => {
     });
   }, [swiperInstances]);
 
-  const sideMenu = cats.map((cat) => ({
-    title: cat.name,
-    items: subCats
-      .filter((subCat) => subCat.categoryName === cat.name)
-      .map((subCat) => subCat.name),
-    imgUrl:
-      Array.isArray(cat.imageUrl) && cat.imageUrl.length > 0
-        ? cat.imageUrl[0]
-        : "default_image_url.jpg",
-    id: cat.id,
-  }));
+  const sideMenu = useMemo(
+    () =>
+      cats.map((cat) => ({
+        title: cat.name,
+        items: subCats
+          .filter((subCat) => subCat.categoryName === cat.name)
+          .map((subCat) => subCat.name),
+        imgUrl:
+          Array.isArray(cat.imageUrl) && cat.imageUrl.length > 0
+            ? cat.imageUrl[0]
+            : "default_image_url.jpg",
+        id: cat.id,
+      })),
+    [cats, subCats]
+  );
 
-  function stringToSlug(str) {
-    str = str.replace("&", "and");
-    str = str.replace(/,/g, "~");
-    return str
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9 -~]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/--+/g, "-");
-  }
+  useEffect(() => {
+    Object.values(swiperStoreRef.current).forEach((instance) => {
+      if (instance?.autoplay) {
+        if (sectionInView) {
+          instance.autoplay.start();
+        } else {
+          instance.autoplay.stop();
+        }
+      }
+    });
+  }, [sectionInView]);
 
   return (
-    <section className="bg-gray-100/50 py-8">
+    <section className="bg-gray-100/50 py-8" ref={sectionRef}>
       <div className="w-10/12 mx-auto py-2">
         <div className="flex justify-between items-center">
           <div className="flex justify-between flex-wrap md:flex-nowrap gap-2 mb-4 w-full">
@@ -250,6 +305,10 @@ const PopularCategories = () => {
                       </button>
 
                       <Swiper
+                        observer={false}
+                        observeParents={false}
+                        resizeObserver={false}
+                        watchOverflow
                         spaceBetween={12}
                         slidesPerView={4.5}
                         navigation={{
@@ -259,10 +318,14 @@ const PopularCategories = () => {
                         pagination={false}
                         modules={[Navigation, Pagination, Scrollbar, A11y, EffectFlip]}
                         onSwiper={(swiper) => {
+                          swiperStoreRef.current[menu.id] = swiper;
                           setSwiperInstances((prev) => ({
                             ...prev,
                             [menu.id]: swiper,
                           }));
+                        }}
+                        onDestroy={() => {
+                          delete swiperStoreRef.current[menu.id];
                         }}
                         breakpoints={{
                           320: { slidesPerView: 1.2, spaceBetween: 8 },
@@ -279,41 +342,18 @@ const PopularCategories = () => {
                           .filter((subCat) =>
                             view === "bestsellers" ? subCat.bestSeller : true
                           )
-                          .map((product) => (
-                            <SwiperSlide key={product.id}>
-                              <div
-                                className="bg-white shadow-md rounded flex flex-col justify-between p-4 cursor-pointer h-full group transition"
-                                onClick={() =>
-                                  router.push(`/shop/${stringToSlug(product.name)}`)
-                                }
-                              >
-                                <div>
-                                  <img
-                                    src={product.images[0] || "https://via.placeholder.com/250"}
-                                    alt={product.name}
-                                    className="w-full h-[150px] md:h-[200px] lg:h-[200px] xl:h-[200px] object-contain mb-4 rounded"
-                                  />
-                                  <h3 className="text-sm md:text-base lg:text-lg font-semibold mb-2 text-[#b21b29] line-clamp-1">
-                                    {product.name}
-                                  </h3>
-                                  <p className="text-xs md:text-sm text-gray-600 mb-2 line-clamp-3">
-                                    {product.description}
-                                  </p>
-                                </div>
-                                <div className="flex justify-between items-center mt-4">
-                                  <Link
-                                    className="text-xs md:text-sm bg-[#b21b29] px-2 py-1 md:px-3 md:py-2 text-white rounded-md font-semibold flex gap-2 items-center hover:bg-[#9c1f24] transition"
-                                    href={`/shop/${stringToSlug(product.name)}`}
-                                  >
-                                    <CgShoppingCart /> Shop Now
-                                  </Link>
-                                  <div className="group-hover:bg-[#b12b29] group-hover:text-white bg-gray-100 rounded-full flex text-lg md:text-xl items-center w-8 h-8 md:w-10 md:h-10 justify-center transition">
-                                    <HiMagnifyingGlass />
-                                  </div>
-                                </div>
-                              </div>
-                            </SwiperSlide>
-                          ))}
+                          .map((product) => {
+                            const slug = stringToSlug(product.name);
+                            return (
+                              <SwiperSlide key={product.id}>
+                                <CategoryProductCard
+                                  product={product}
+                                  slug={slug}
+                                  onClick={() => router.push(`/shop/${slug}`)}
+                                />
+                              </SwiperSlide>
+                            );
+                          })}
                       </Swiper>
                     </div>
                   </div>

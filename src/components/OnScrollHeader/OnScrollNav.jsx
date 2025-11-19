@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Logo } from "../Logo";
 import { useRouter } from "next/navigation";
@@ -50,7 +50,9 @@ const OnScrollNav = () => {
   }, [prevScrollY]);
 
 
-  const handleSearch = async (query) => {
+  const searchDebounceRef = useRef(null);
+
+  const fetchSearchResults = useCallback(async (query) => {
     if (query.length < 3) {
       setSearchResults(null);
       setShowResults(false);
@@ -66,7 +68,6 @@ const OnScrollNav = () => {
         setShowResults(false);
         return;
       }
-
       const data = await response.json();
       setSearchResults(data);
       setShowResults(true);
@@ -75,13 +76,20 @@ const OnScrollNav = () => {
       setSearchResults(null);
       setShowResults(false);
     }
-  };
+  }, [apiUrl]);
+
+  const triggerSearch = useCallback((query) => {
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+    searchDebounceRef.current = setTimeout(() => fetchSearchResults(query), 300);
+  }, [fetchSearchResults]);
 
   const handleSearchChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
     if (query.length >= 3) {
-      handleSearch(query);
+      triggerSearch(query);
     } else {
       setSearchResults([]);
       setShowResults(false);
@@ -113,6 +121,14 @@ const OnScrollNav = () => {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current);
+      }
+    };
   }, []);
 
   const navItems = [

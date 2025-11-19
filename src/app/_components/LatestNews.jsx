@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from '@/components/LazySwiper';
 import { Autoplay, Pagination, Grid } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import 'swiper/css/grid';
+import { useInView } from '@/hooks/useInView';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const blogApi = isProduction
@@ -76,12 +77,64 @@ const LogoSkeletonGrid = () => (
     </div>
 );
 
+const BlogCard = React.memo(({ blog, onReadMore, onNavigate }) => (
+    <div className='bg-white shadow-md rounded-lg h-full flex flex-col' onClick={onNavigate}>
+        <img src={blog.imageUrl} alt={blog.title} className="w-full h-52 object-cover mb-4 rounded-t" loading="lazy" />
+        <p className="font-semibold text-sm bg-white w-fit text-[#b12b29] px-4 py-1 rounded-md mt-[-30px]">{blog.categories[0]}</p>
+        <div className='p-4 flex flex-1 flex-col'>
+            <h4 className="text-md font-semibold mb-2 !line-clamp-2">{blog.title}</h4>
+            <p className="text-xs text-gray-500 mb-4">{blog.date}</p>
+            <button className="text-[#b12b29] hover:underline mt-auto text-left" onClick={(e) => { e.stopPropagation(); onReadMore(); }}>Read More</button>
+        </div>
+    </div>
+));
+BlogCard.displayName = "BlogCard";
+
+const SupplierCard = React.memo(({ supplier, onClick }) => (
+    <div
+        className="bg-white shadow-md rounded-lg flex flex-col items-center p-2 cursor-pointer hover:shadow-lg transition"
+        onClick={onClick}
+    >
+        <div
+            className="w-full h-24 bg-contain bg-no-repeat bg-center mb-2"
+            style={{ backgroundImage: `url(${supplier.imageUrl})` }}
+        />
+        <p className="text-sm font-semibold text-gray-700 text-center w-full truncate">
+            {supplier.name}
+        </p>
+    </div>
+));
+SupplierCard.displayName = "SupplierCard";
+
+const VehicleCard = React.memo(({ vehicle, onClick }) => (
+    <div
+        className="bg-white shadow-md rounded-lg flex flex-col items-center p-2 cursor-pointer hover:shadow-lg transition"
+        onClick={onClick}
+    >
+        <div
+            className="w-full h-24 bg-contain bg-no-repeat bg-center mb-2"
+            style={{ backgroundImage: `url(${vehicle.imageUrl})` }}
+        />
+        <h4 className="text-sm font-semibold text-center">{vehicle.name}</h4>
+    </div>
+));
+VehicleCard.displayName = "VehicleCard";
+
 const LatestNews = () => {
     const [blogs, setBlogs] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const blogSectionRef = useRef(null);
+    const supplierSectionRef = useRef(null);
+    const vehicleSectionRef = useRef(null);
+    const blogSwiperRef = useRef(null);
+    const supplierSwiperRef = useRef(null);
+    const vehicleSwiperRef = useRef(null);
+    const blogsInView = useInView(blogSectionRef, { threshold: 0.2 });
+    const suppliersInView = useInView(supplierSectionRef, { threshold: 0.2 });
+    const vehiclesInView = useInView(vehicleSectionRef, { threshold: 0.2 });
 
     const stringToSlug = (str) =>
         str.replace("&", "and").replace(/,/g, "~")
@@ -108,10 +161,40 @@ const LatestNews = () => {
         getAllData();
     }, []);
 
-    const handleSupplierClick = (supplier) => {
+    useEffect(() => {
+        const instance = blogSwiperRef.current;
+        if (!instance?.autoplay) return;
+        if (blogsInView) {
+            instance.autoplay.start();
+        } else {
+            instance.autoplay.stop();
+        }
+    }, [blogsInView]);
+
+    useEffect(() => {
+        const instance = supplierSwiperRef.current;
+        if (!instance?.autoplay) return;
+        if (suppliersInView) {
+            instance.autoplay.start();
+        } else {
+            instance.autoplay.stop();
+        }
+    }, [suppliersInView]);
+
+    useEffect(() => {
+        const instance = vehicleSwiperRef.current;
+        if (!instance?.autoplay) return;
+        if (vehiclesInView) {
+            instance.autoplay.start();
+        } else {
+            instance.autoplay.stop();
+        }
+    }, [vehiclesInView]);
+
+    const handleSupplierClick = useCallback((supplier) => {
         const brand = stringToSlug(supplier.name);
         router.push(`/suppliers/${brand}`);
-    };
+    }, [router]);
 
     return (
         <section className="py-12">
@@ -119,11 +202,15 @@ const LatestNews = () => {
                 <h2 className="w-10/12 mx-auto text-2xl font-bold mb-6">Latest News & Blogs</h2>
 
                 {/* Blog Swiper */}
-                <div className="w-10/12 mx-auto mb-8 min-h-[360px]">
+                <div className="w-10/12 mx-auto mb-8 min-h-[360px]" ref={blogSectionRef}>
                     {loading ? (
                         <BlogSkeleton />
                     ) : (
                         <Swiper
+                            observer={false}
+                            observeParents={false}
+                            resizeObserver={false}
+                            watchOverflow
                             modules={[Autoplay, Pagination]}
                             spaceBetween={6}
                             slidesPerView={2}
@@ -135,18 +222,27 @@ const LatestNews = () => {
                                 1024: { slidesPerView: 3 },
                                 1280: { slidesPerView: 4 },
                             }}
+                            onSwiper={(instance) => {
+                                blogSwiperRef.current = instance;
+                                if (!blogsInView && instance.autoplay) {
+                                    instance.autoplay.stop();
+                                }
+                            }}
+                            onDestroy={() => {
+                                blogSwiperRef.current = null;
+                            }}
                         >
                             {blogs.map(blog => (
                                 <SwiperSlide key={blog.id} className="py-2 h-full">
-                                    <div className='bg-white shadow-md rounded-lg h-full flex flex-col' onClick={() => router.push(`/blogs/${blog.id}`)}>
-                                        <img src={blog.imageUrl} alt={blog.title} className="w-full h-52 object-cover mb-4 rounded-t" />
-                                        <p className="font-semibold text-sm bg-white w-fit text-[#b12b29] px-4 py-1 rounded-md mt-[-30px]">{blog.categories[0]}</p>
-                                        <div className='p-4 flex flex-1 flex-col'>
-                                            <h4 className="text-md font-semibold mb-2 !line-clamp-2">{blog.title}</h4>
-                                            <p className="text-xs text-gray-500 mb-4">{blog.date}</p>
-                                            <a href={blog.link} className="text-[#b12b29] hover:underline mt-auto">Read More</a>
-                                        </div>
-                                    </div>
+                                    <BlogCard
+                                        blog={blog}
+                                        onNavigate={() => router.push(`/blogs/${blog.id}`)}
+                                        onReadMore={() => {
+                                            if (typeof window !== "undefined") {
+                                                window.open(blog.link, "_blank", "noopener,noreferrer");
+                                            }
+                                        }}
+                                    />
                                 </SwiperSlide>
                             ))}
                         </Swiper>
@@ -158,11 +254,15 @@ const LatestNews = () => {
                     <div className="w-10/12 mx-auto">
                         <h3 className="text-2xl font-bold mb-8 text-center">Our Suppliers</h3>
 
-                        <div className="min-h-[220px]">
+                        <div className="min-h-[220px]" ref={supplierSectionRef}>
                             {loading ? (
                                 <LogoSkeletonGrid />
                             ) : (
                                 <Swiper
+                                    observer={false}
+                                    observeParents={false}
+                                    resizeObserver={false}
+                                    watchOverflow
                                     modules={[Autoplay, Grid]}
                                     autoplay={{ delay: 3000, disableOnInteraction: false }}
                                     spaceBetween={16}
@@ -177,21 +277,26 @@ const LatestNews = () => {
                                         1024: { slidesPerView: 6, grid: { rows: 1 }, spaceBetween: 16 },
                                         1280: { slidesPerView: 10, grid: { rows: 1 }, spaceBetween: 16 },
                                     }}
+                                    onSwiper={(instance) => {
+                                        supplierSwiperRef.current = instance;
+                                        if (!suppliersInView && instance.autoplay) {
+                                            instance.autoplay.stop();
+                                        }
+                                    }}
+                                    onDestroy={() => {
+                                        supplierSwiperRef.current = null;
+                                    }}
                                 >
                                     {suppliers.slice(0, 40).map((supplier, index) =>
                                         supplier.imageUrl ? (
                                             <SwiperSlide
                                                 key={index}
-                                                className="bg-white shadow-md rounded-lg flex flex-col items-center p-2 cursor-pointer hover:shadow-lg transition"
-                                                onClick={() => handleSupplierClick(supplier)}
+                                                className="p-2"
                                             >
-                                                <div
-                                                    className="w-full h-24 bg-contain bg-no-repeat bg-center mb-2"
-                                                    style={{ backgroundImage: `url(${supplier.imageUrl})` }}
+                                                <SupplierCard
+                                                    supplier={supplier}
+                                                    onClick={() => handleSupplierClick(supplier)}
                                                 />
-                                                <p className="text-sm font-semibold text-gray-700 text-center w-full truncate">
-                                                    {supplier.name}
-                                                </p>
                                             </SwiperSlide>
                                         ) : null
                                     )}
@@ -217,11 +322,15 @@ const LatestNews = () => {
                     <div className="w-10/12 mx-auto">
                         <h3 className="text-2xl font-bold mb-8 text-center">Popular Vehicles</h3>
 
-                        <div className="min-h-[220px]">
+                        <div className="min-h-[220px]" ref={vehicleSectionRef}>
                             {loading ? (
                                 <LogoSkeletonGrid />
                             ) : (
                                 <Swiper
+                                    observer={false}
+                                    observeParents={false}
+                                    resizeObserver={false}
+                                    watchOverflow
                                     modules={[Autoplay, Grid]}
                                     autoplay={{ delay: 3000, disableOnInteraction: false }}
                                     spaceBetween={16}
@@ -233,6 +342,15 @@ const LatestNews = () => {
                                         1024: { slidesPerView: 6, grid: { rows: 1 }, spaceBetween: 16 },
                                         1280: { slidesPerView: 10, grid: { rows: 1 }, spaceBetween: 16 },
                                     }}
+                                    onSwiper={(instance) => {
+                                        vehicleSwiperRef.current = instance;
+                                        if (!vehiclesInView && instance.autoplay) {
+                                            instance.autoplay.stop();
+                                        }
+                                    }}
+                                    onDestroy={() => {
+                                        vehicleSwiperRef.current = null;
+                                    }}
                                 >
                                     {vehicles
                                         .filter(vehicle => vehicle.name.toUpperCase() !== "PONTIAC")
@@ -240,14 +358,12 @@ const LatestNews = () => {
                                         .map(vehicle => (
                                             <SwiperSlide
                                                 key={vehicle.id}
-                                                className="bg-white shadow-md rounded-lg flex flex-col items-center p-2 cursor-pointer hover:shadow-lg transition"
-                                                onClick={() => router.push(`/vehicle/${stringToSlug(vehicle.name)}`)}
+                                                className="p-2"
                                             >
-                                                <div
-                                                    className="w-full h-24 bg-contain bg-no-repeat bg-center mb-2"
-                                                    style={{ backgroundImage: `url(${vehicle.imageUrl})` }}
+                                                <VehicleCard
+                                                    vehicle={vehicle}
+                                                    onClick={() => router.push(`/vehicle/${stringToSlug(vehicle.name)}`)}
                                                 />
-                                                <h4 className="text-sm font-semibold text-center">{vehicle.name}</h4>
                                             </SwiperSlide>
                                         ))}
                                 </Swiper>
