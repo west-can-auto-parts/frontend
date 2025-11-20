@@ -16,8 +16,8 @@ export const Logo = ({ className = "", priority = false }: LogoProps) => {
       width={300}
       height={156}
       priority={priority}
-      className={`max-w-full h-auto ${className}`}
-      sizes="(max-width: 768px) 180px, (max-width: 1280px) 240px, 320px"
+      className={className}
+      sizes="(max-width: 768px) 350px, 500px"
     />
   );
 };
