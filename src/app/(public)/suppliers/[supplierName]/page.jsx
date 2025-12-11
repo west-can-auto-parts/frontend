@@ -7,6 +7,7 @@ import axios from "axios";
 
 const Page = ({ params }) => {
   const [supplier, setSupplier] = useState(null);
+  const [allSuppliers, setAllSuppliers] = useState([]);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -19,7 +20,7 @@ const Page = ({ params }) => {
     ? "https://clientsidebackend.onrender.com/api/suppliers"
     : "http://localhost:8080/api/suppliers";
 
-  
+
 
   function stringToSlug(str) {
     str = str.replace("&", "and");
@@ -154,6 +155,36 @@ const Page = ({ params }) => {
   }, [brand]);
 
   useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/all`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch suppliers");
+        }
+        const data = await response.json();
+        setAllSuppliers(data);
+        // setFilteredSuppliers(data);
+
+        // Extract unique categories (assuming `category` is an array)
+        // const categories = new Set();
+        // data.forEach((supplier) => {
+        //   if (supplier.category) {
+        //     categories.add(supplier.category);
+        //   }
+        // });
+
+        // setUniqueHeadings([...categories]);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSuppliers();
+  }, [apiUrl]);
+
+  useEffect(() => {
     const handleResize = () => {
       setIsMobileView(window.innerWidth < 768);
     };
@@ -174,6 +205,11 @@ const Page = ({ params }) => {
 
     const slug = stringToSlug(listing);
     router.push(`/${categorySlug}/${slug}`);
+  };
+
+  const handleSupplierClick = (supplier) => {
+    const brand = stringToSlug(supplier.name);
+    router.push(`/suppliers/${brand}`);
   };
 
   const getShortDescription = (text) => {
@@ -231,6 +267,26 @@ const Page = ({ params }) => {
             styles={customSelectStyles2}
           />
         </div>
+
+        <div className="mb-4">
+          <Select
+            id="category-select"
+            className="basic-single"
+            classNamePrefix="select"
+            value={supplier ? { value: supplier.name, label: supplier.name } : null}
+            onChange={(selectedOption) => handleSupplierClick(selectedOption.value)}
+            options={
+              Array.isArray(allSuppliers)
+                ? allSuppliers.map((sup) => ({
+                  value: sup,
+                  label: sup.name
+                }))
+                : []
+            }
+            styles={customSelectStyles2}
+          />
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           {supplier?.subCategory?.[selectedCategory]?.productCategory?.map((product, i) => (
             <div
@@ -288,19 +344,44 @@ const Page = ({ params }) => {
 
         {/* Products Section */}
         <div className="w-2/3">
-          <div className="mt-6">
-            <Select
-              value={{ value: selectedCategory, label: selectedCategory }}
-              onChange={(e) => setSelectedCategory(e.value)}
-              options={
-                supplier?.subCategory
-                  ? Object.entries(supplier.subCategory)
-                    .sort((a, b) => a[1].position - b[1].position)
-                    .map(([key]) => ({ value: key, label: key }))
-                  : []
-              }
-              styles={customSelectStyles}
-            />
+          {/* Both Dropdowns Side by Side */}
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
+            {/* Category Select */}
+            <div className="flex-1">
+              <Select
+                value={{ value: selectedCategory, label: selectedCategory }}
+                onChange={(e) => setSelectedCategory(e.value)}
+                options={
+                  supplier?.subCategory
+                    ? Object.entries(supplier.subCategory)
+                      .sort((a, b) => a[1].position - b[1].position)
+                      .map(([key]) => ({ value: key, label: key }))
+                    : []
+                }
+                styles={customSelectStyles}
+                placeholder="Select Category"
+              />
+            </div>
+
+            {/* Supplier Select */}
+            <div className="flex-1">
+              <Select
+                value={supplier ? { value: supplier.name, label: supplier.name } : null}
+                onChange={(selectedOption) => handleSupplierClick(selectedOption.value)}
+                options={
+                  Array.isArray(allSuppliers)
+                    ? allSuppliers.map((sup) => ({
+                      value: sup,
+                      label: sup.name
+                    }))
+                    : []
+                }
+                getOptionLabel={(option) => option.label}
+                getOptionValue={(option) => option.value}
+                styles={customSelectStyles}
+                placeholder="Select a Supplier"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">

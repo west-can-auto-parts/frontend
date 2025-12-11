@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
 export const RelatedSubCategory = ({ subCategories = [], onCategorySelect }) => {
-  console.log("SubCategories in RelatedSubCategory:", subCategories);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -12,13 +11,11 @@ export const RelatedSubCategory = ({ subCategories = [], onCategorySelect }) => 
   // Add useEffect to handle initial category selection
   React.useEffect(() => {
     if (subCategories.length > 0 && !selectedCategory) {
-      console.log("Selecting initial category:", subCategories[0]);
       handleCategoryClick(subCategories[1]);
     }
   }, [subCategories]);
 
   const handleCategoryClick = async (category) => {
-    console.log("Handling category click:", category);
     setSelectedCategory(category.name);
     setIsLoading(true);
     
@@ -35,7 +32,6 @@ export const RelatedSubCategory = ({ subCategories = [], onCategorySelect }) => 
       }
       
       const products = await response.json();
-      console.log("Fetched products:", products);
       
       // Call the parent's onCategorySelect with both category and its products
       if (onCategorySelect) {

@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-
+import {VehicleList} from "./_components/vehicle-list";
 import { RelatedSubCategory } from "./_components/related-subcategory";
 import { ModelList } from "./_components/model-list";
+
 
 const Page = ({ params }) => {
   const [model, setModel] = useState(null);
@@ -170,19 +171,18 @@ const Page = ({ params }) => {
 
     return (
       <>
-        <div className="w-10/12 mx-auto py-8 flex flex-col md:flex-row gap-6">
+       <div className="w-10/12 mx-auto py-8 flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-1/6 bg-white h-fit">
-            <div className="mb-4">
+           <div className="mb-4 space-y-6">
+              <VehicleList />
               <ModelList modelList={modelList} vehicleName={vehicleName} />
-              <div className="mt-6">
-                <RelatedSubCategory
-                  subCategories={subCategoryList}
-                  onCategorySelect={handleCategorySelect}
-                />
-              </div>
+              <RelatedSubCategory
+                subCategories={subCategoryList}
+                onCategorySelect={handleCategorySelect}
+              />
             </div>
-          </div>
-          <div className="w-full md:w-4/5 py-2 md:py-0">
+         </div>
+         <div className="w-full md:w-4/5 py-2 md:py-0">
             <div className="bg-white shadow-md rounded overflow-hidden mb-6 h-48 w-full">
               <img src={model.bannerImageUrl || "/placeholder.jpg"} alt={model.name} className="w-full h-full object-cover" />
             </div>
