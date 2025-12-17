@@ -3,6 +3,38 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
 
+// Skeletons to avoid layout shift while data loads
+const Skeleton = ({ className = "" }) => (
+  <div className={`animate-pulse bg-gray-200 ${className}`} aria-hidden="true" />
+);
+
+const VehiclePageSkeleton = () => (
+  <section className='w-10/12 mt-2 md:mt-4 mx-auto flex flex-wrap md:flex-nowrap gap-4'>
+    <div className="w-full md:w-3/4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-5">
+        {Array.from({ length: 10 }).map((_, idx) => (
+          <div key={idx} className="bg-white p-3 space-y-2">
+            <Skeleton className="h-[100px] rounded" />
+            <Skeleton className="h-4 w-3/4 mx-auto rounded" />
+          </div>
+        ))}
+      </div>
+    </div>
+    <div className="w-full md:w-1/4 flex flex-col gap-4">
+      {[0, 1].map((key) => (
+        <div key={key} className="w-full rounded-md overflow-hidden shadow-md">
+          <Skeleton className="h-48 w-full" />
+          <div className="p-6 space-y-3">
+            <Skeleton className="h-5 w-24 rounded" />
+            <Skeleton className="h-4 w-full rounded" />
+            <Skeleton className="h-4 w-5/6 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
 const SuppliersPage = () => {
   const [vehicles, setVehicles] = useState([]);
   const [filteredVehicles, setFilteredVehicles] = useState([]);
@@ -66,12 +98,17 @@ const SuppliersPage = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentVehicles = filteredVehicles.slice(indexOfFirstItem, indexOfLastItem);
 
+  if (loading) {
+    return <VehiclePageSkeleton />;
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500">Error: {error}</p>;
+  }
+
   return (
     <section className='w-10/12 mt-2 md:mt-4 mx-auto flex flex-wrap md:flex-nowrap gap-4'>
       <div className="w-full md:w-3/4">
-        {loading && <p className="text-center text-gray-600">Loading vehicles...</p>}
-        {error && <p className="text-center text-red-500">Error: {error}</p>}
-
         {/* Vehicle Grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-5 cursor-pointer">
           {currentVehicles.map((vehicle, index) => (

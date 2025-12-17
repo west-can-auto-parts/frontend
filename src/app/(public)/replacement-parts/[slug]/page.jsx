@@ -8,6 +8,50 @@ import { RelatedParts } from "./_components/related-parts";
 import { BreadCrumbs } from "./_components/head-links";
 import { PartSupplier } from "./_components/part-supplier";
 
+// Skeletons to avoid layout shift while data loads
+const Skeleton = ({ className = "" }) => (
+  <div className={`animate-pulse bg-gray-200 ${className}`} aria-hidden="true" />
+);
+
+const PageSkeleton = () => (
+  <div className="w-10/12 mx-auto flex flex-wrap gap-2 md:gap-4">
+    <div className="w-full space-y-4">
+      <Skeleton className="h-4 w-48 rounded" /> {/* Breadcrumb placeholder */}
+      <div className="w-full flex flex-wrap md:flex-nowrap gap-2 md:gap-8">
+        <div className="w-full md:w-1/2 space-y-2">
+          <Skeleton className="w-full h-64 rounded" />
+          <div className="grid grid-cols-4 gap-2">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-12 rounded" />
+            ))}
+          </div>
+        </div>
+        <div className="w-full md:w-1/2 space-y-3">
+          <Skeleton className="h-6 w-3/4 rounded" />
+          <Skeleton className="h-4 w-1/2 rounded" />
+          <Skeleton className="h-24 w-full rounded" />
+          <div className="grid grid-cols-2 gap-2">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-8 rounded" />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="space-y-2">
+            <Skeleton className="h-32 rounded" />
+            <Skeleton className="h-4 w-3/4 rounded mx-auto" />
+          </div>
+        ))}
+      </div>
+    </div>
+    <div className="w-full">
+      <Skeleton className="h-48 rounded" /> {/* PartSupplier placeholder */}
+    </div>
+  </div>
+);
+
 const Page = ({ params }) => {
   const slug = params.slug;
 
@@ -81,7 +125,7 @@ const Page = ({ params }) => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <PageSkeleton />;
   }
 
   if (error) {

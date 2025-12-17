@@ -95,8 +95,7 @@ const FeaturedProducts = () => {
       />
       <div className="p-3 group-hover:bg-gray-100/75">
         <h3
-          className="text-sm font-semibold mb-2 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer"
-          onClick={() => handleClick(product.name, product.categoryName)}
+          className="text-sm font-semibold mb-2 whitespace-nowrap overflow-hidden text-ellipsis"
         >
           {product.name}
         </h3>
@@ -156,7 +155,7 @@ const FeaturedProducts = () => {
               }}
             >
               {autoParts.map(product => (
-                <SwiperSlide key={product._id} className="py-4 h-full">
+                <SwiperSlide key={product._id} className="py-4 h-full cursor-pointer" onClick={() => handleClick(product.name, product.categoryName)}>
                   {renderProductCard(product)}
                 </SwiperSlide>
               ))}
