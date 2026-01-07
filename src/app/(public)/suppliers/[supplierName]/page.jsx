@@ -366,7 +366,7 @@ const Page = ({ params }) => {
             {/* Supplier Select */}
             <div className="flex-1">
               <Select
-                value={supplier ? { value: supplier.name, label: supplier.name } : null}
+                // value={supplier ? { value: supplier.name, label: supplier.name } : null}
                 onChange={(selectedOption) => handleSupplierClick(selectedOption.value)}
                 options={
                   Array.isArray(allSuppliers)
@@ -379,7 +379,7 @@ const Page = ({ params }) => {
                 getOptionLabel={(option) => option.label}
                 getOptionValue={(option) => option.value}
                 styles={customSelectStyles}
-                placeholder="Select a Supplier"
+                placeholder="Search Other Suppliers"
               />
             </div>
           </div>

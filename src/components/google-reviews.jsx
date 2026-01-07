@@ -34,10 +34,10 @@ function getRandomColor(name) {
   return color;
 }
 
-// const isProduction = process.env.NODE_ENV === 'production';
-// const apiUrl = isProduction
-//   ? 'https://clientsidebackend.onrender.com/api/review'
-//   : 'http://localhost:8080/api/review';
+const isProduction = process.env.NODE_ENV === 'production';
+const apiUrl = isProduction
+  ? 'https://clientsidebackend.onrender.com/api/review'
+  : 'http://localhost:8080/api/review';
 
 const ReviewSkeleton = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -81,7 +81,7 @@ export const GoogleReviews = ({ apiKey, placeId }) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${apiUrl}/getAllReviews`);
+        const response = await fetch(`${apiUrl}/getReviews`);
         const data = await response.json();
         setReviews(data);
       } catch (err) {

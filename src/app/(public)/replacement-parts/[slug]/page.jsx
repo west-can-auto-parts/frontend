@@ -162,7 +162,7 @@ const Page = ({ params }) => {
           {/* Desktop Popup */}
           <div className="hidden md:block fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50">
             <a
-              href="https://store.westcanauto.com/store/portal"
+              // href="https://store.westcanauto.com/store/portal"
               target="_blank"
               rel="noopener noreferrer"
               className="relative bg-[#b12b29] text-white shadow-lg border rounded-lg p-4 flex items-center gap-4 w-full max-w-lg cursor-pointer"

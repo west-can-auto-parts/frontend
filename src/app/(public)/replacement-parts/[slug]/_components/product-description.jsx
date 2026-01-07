@@ -249,7 +249,7 @@ export const ProductDescription = ({ myProduct }) => {
                 )}
                 <button
                     className="bg-[#b12b29] text-white px-4 py-2 rounded-md w-full md:w-1/2 flex justify-center gap-2"
-                    onClick={() => window.open('https://store.westcanauto.com/store/portal', '_blank')}
+                    // onClick={() => window.open('https://store.westcanauto.com/store/portal', '_blank')}
                     onMouseEnter={() => {
                         if (window.innerWidth >= 768) { 
                           setIsHovering(true);
