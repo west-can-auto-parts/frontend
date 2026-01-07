@@ -55,13 +55,13 @@ const HeroSection = () => {
             // title: "Exclusive Monthly Offers",
             // description: "Limited-time deals directly from top manufacturers",
             href: '/categories',
-            imgUrl: "https://res.cloudinary.com/dpeocx0yy/image/upload/v1767787170/NEW_WEBSITE_BANNER_1227_x_413_px_vvnqk7.png",
+            imgUrl: "https://res.cloudinary.com/dpeocx0yy/image/upload/v1767792566/NEW_WEBSITE_BANNER_1_eldihk.png",
         },
         {
             // title: "Mega Savings on Auto Parts",
             // description: "Premium quality parts at unbeatable prices",
             href: '/categories',
-            imgUrl: "https://res.cloudinary.com/dpeocx0yy/image/upload/v1767787165/NEW_WEBSITE_BANNER_1227_x_413_px_1_xynsyu.png",
+            imgUrl: "https://res.cloudinary.com/dpeocx0yy/image/upload/v1767792566/NEW_WEBSITE_BANNER_dk9klb.png",
         },
     ];
 
