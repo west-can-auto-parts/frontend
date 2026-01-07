@@ -29,7 +29,6 @@ const HeroSection = () => {
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
-        
 
     };
 
@@ -38,21 +37,34 @@ const HeroSection = () => {
             title: "Find Parts That Fit Your Vehicle",
             description: " Discover a world of automotive excellence with our unbeatable parts selection",
             href: '/categories',
-            imgUrl: hero1,
+            imgUrl: hero1.src, // local image
         },
         {
             title: "We Offer Live Chat Support",
             description: "Monday to Friday. From 8:00 A.M to 5:00 P.M. PDT",
             href: '/contact-us',
-            imgUrl: hero3,
+            imgUrl: hero3.src, // local image
         },
         {
             title: "Shop Smart, Save Big! Unbeatable Deals",
-            description: " Discover a world of automotive excellence with our unbeatable parts selection",
+            description: "Discover a world of automotive excellence with our unbeatable parts selection",
             href: '/categories',
-            imgUrl: hero2,
+            imgUrl: hero2.src, // local image
         },
-    ]
+        {
+            // title: "Exclusive Monthly Offers",
+            // description: "Limited-time deals directly from top manufacturers",
+            href: '/categories',
+            imgUrl: "https://res.cloudinary.com/dpeocx0yy/image/upload/v1767787170/NEW_WEBSITE_BANNER_1227_x_413_px_vvnqk7.png",
+        },
+        {
+            // title: "Mega Savings on Auto Parts",
+            // description: "Premium quality parts at unbeatable prices",
+            href: '/categories',
+            imgUrl: "https://res.cloudinary.com/dpeocx0yy/image/upload/v1767787165/NEW_WEBSITE_BANNER_1227_x_413_px_1_xynsyu.png",
+        },
+    ];
+
 
 
     return (
@@ -61,9 +73,9 @@ const HeroSection = () => {
                 {heroContent.map((slide, index) => (
                     <div className='w-full' key={index}>
                         <div key={index} className="rounded-md bg-no-repeat bg-gray-100 overflow-hidden bg-bottom md:bg-center !w-10/12 !mx-auto h-[30vh] md:h-[50vh] p-10 flex gap-4 flex-col justify-center" style={{
-                            backgroundImage: `url(${slide.imgUrl.src})`,
-                            backgroundSize: 'contain',
-                            backgroundPosition: 'bottom right'
+                            backgroundImage: `url(${slide.imgUrl})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center'
                         }}>
                             <p className='text-xl md:text-4xl pr-0 font-extrabold w-full md:w-2/3 lg:w-1/2 mb-1 pb-0 md:mb-4'>
                                 {slide.title}
