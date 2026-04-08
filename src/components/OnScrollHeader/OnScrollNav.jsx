@@ -52,16 +52,17 @@ const OnScrollNav = () => {
 
   const handleSearch = async (query) => {
     if (query.length < 3) {
-      setSearchResults(null);
-      setShowResults(false);
       return;
     }
     const slug = stringToSlug(query);
 
     try {
-      const response = await fetch(`${apiUrl}/search?query=${slug}`);
+      const response = await fetch(
+        `${apiUrl}/suggestions?prefix=${encodeURIComponent(input)}&limit=10`,
+        { headers: { Accept: "application/json" } }
+      );
       if (!response.ok) {
-        console.error("Search API returned an error:", response.status);
+        console.error('Search API returned an error:', response.status);
         setSearchResults(null);
         setShowResults(false);
         return;
@@ -71,7 +72,7 @@ const OnScrollNav = () => {
       setSearchResults(data);
       setShowResults(true);
     } catch (error) {
-      console.error("Error fetching search results:", error);
+      console.error('Error fetching search results:', error);
       setSearchResults(null);
       setShowResults(false);
     }
@@ -87,6 +88,7 @@ const OnScrollNav = () => {
       setShowResults(false);
     }
   };
+  
 
   const handleResultClick = (listing, category) => {
     const categorySlug =

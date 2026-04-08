@@ -61,7 +61,10 @@ const MainContent = () => {
     }
     const slug = stringToSlug(query);
     try {
-      const response = await fetch(`${apiUrl}/search?query=${slug}`);
+      const response = await fetch(
+      `${apiUrl}/suggestions?prefix=${encodeURIComponent(slug)}&limit=10`,
+      { headers: { Accept: "application/json" } }
+    );
       if (!response.ok) {
         console.error('Search API returned an error:', response.status);
         setSearchResults(null);
@@ -106,7 +109,10 @@ const MainContent = () => {
     const slug = stringToSlug(searchQuery);
 
     try {
-      const response = await fetch(`${apiUrl}/search?query=${(slug)}`);
+      const response = await fetch(
+      `${apiUrl}/suggestions?prefix=${encodeURIComponent(slug)}&limit=10`,
+      { headers: { Accept: "application/json" } }
+    );
       if (!response.ok) {
         console.error('Search API returned an error:', response.status);
         setSearchResults(null);
