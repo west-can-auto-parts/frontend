@@ -1,7 +1,10 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react'
-import { FaMagnifyingGlass, FaBars, FaCar, FaHeart, FaPersonCircleCheck, FaCartShopping, FaXmark, FaWhatsapp, FaChevronRight } from 'react-icons/fa6';
+import { FaMagnifyingGlass, FaBars, FaCar, FaHeart, FaPersonCircleCheck, FaCartShopping, FaXmark, FaWhatsapp, FaChevronRight, FaChevronDown, FaWarehouse } from 'react-icons/fa6';
+import { GaragePanel } from './_components/GaragePanel';
+import { fetchUserSession, deleteGarageVehicle } from '@/lib/userSessionApi';
+import { parseGarageVehicles, vehicleToSearchParams, vehicleToDeletePayload, vehicleToKey } from '@/lib/parseGarageVehicles';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -22,14 +25,192 @@ const navItems = [
   { label: 'FAQs', href: '/faqs' },
 ];
 
+const YEARS = Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i);
+
+const MAKES_MODELS = {
+  HYUNDAI: ['ACCENT', 'ELANTRA', 'SONATA', 'TUCSON', 'SANTA FE', 'VELOSTER', 'IONIQ 5'],
+  KIA: ['RIO', 'FORTE', 'SOUL', 'SPORTAGE', 'SORENTO', 'STINGER', 'TELLURIDE'],
+  TOYOTA: ['COROLLA', 'CAMRY', 'RAV4', 'HIGHLANDER', 'TACOMA', 'TUNDRA', '4RUNNER'],
+  HONDA: ['CIVIC', 'ACCORD', 'CR-V', 'PILOT', 'ODYSSEY', 'RIDGELINE', 'HR-V'],
+  FORD: ['F-150', 'MUSTANG', 'EXPLORER', 'ESCAPE', 'EDGE', 'BRONCO', 'RANGER'],
+  CHEVROLET: ['SILVERADO', 'EQUINOX', 'MALIBU', 'TAHOE', 'TRAVERSE', 'COLORADO', 'CAMARO'],
+  DODGE: ['RAM 1500', 'CHARGER', 'CHALLENGER', 'DURANGO', 'GRAND CARAVAN', 'JOURNEY'],
+  NISSAN: ['ALTIMA', 'SENTRA', 'ROGUE', 'MURANO', 'PATHFINDER', 'FRONTIER', 'TITAN'],
+  BMW: ['3 SERIES', '5 SERIES', 'X3', 'X5', '7 SERIES', 'M3', 'M5'],
+  MERCEDES: ['C-CLASS', 'E-CLASS', 'GLC', 'GLE', 'A-CLASS', 'S-CLASS', 'CLA'],
+};
+
+const VehicleSelector = ({ onClose }) => {
+  const router = useRouter();
+  const [year, setYear] = useState('');
+  const [make, setMake] = useState('');
+  const [model, setModel] = useState('');
+  const [submodel, setSubmodel] = useState('');
+  const [engine, setEngine] = useState('');
+
+  const models = make ? (MAKES_MODELS[make] || []) : [];
+  const isValid = Boolean(year && make && model);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!isValid) return;
+
+    const params = new URLSearchParams({ year, make, model });
+    if (submodel) params.set('submodel', submodel);
+    if (engine) params.set('engine', engine);
+
+    onClose();
+    router.push(`/search?${params.toString()}`);
+  };
+
+  return (
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[520px] max-w-[95vw] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+      <div className="bg-[#b91c1c] px-5 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <FaCar className="text-white text-lg" />
+          <span className="text-white font-bold text-sm tracking-wide">Find Parts For Your Vehicle</span>
+        </div>
+        <button
+          onClick={onClose}
+          className="text-white/70 hover:text-white transition-colors"
+          aria-label="Close vehicle selector"
+        >
+          <FaXmark className="text-base" />
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Year <span className="text-[#b91c1c]">*</span>
+            </label>
+            <div className="relative">
+              <select
+                value={year}
+                onChange={(event) => setYear(event.target.value)}
+                className="w-full appearance-none border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#b91c1c] focus:border-[#b91c1c] cursor-pointer pr-8"
+              >
+                <option value="">Select Year</option>
+                {YEARS.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+              <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Make <span className="text-[#b91c1c]">*</span>
+            </label>
+            <div className="relative">
+              <select
+                value={make}
+                onChange={(event) => {
+                  setMake(event.target.value);
+                  setModel('');
+                }}
+                className="w-full appearance-none border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#b91c1c] focus:border-[#b91c1c] cursor-pointer pr-8"
+              >
+                <option value="">Select Make</option>
+                {Object.keys(MAKES_MODELS).map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+              <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+            Model <span className="text-[#b91c1c]">*</span>
+          </label>
+          <div className="relative">
+            <select
+              value={model}
+              onChange={(event) => setModel(event.target.value)}
+              disabled={!make}
+              className="w-full appearance-none border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-[#b91c1c] focus:border-[#b91c1c] cursor-pointer pr-8 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
+            >
+              <option value="">{make ? 'Select Model' : 'Select a Make first'}</option>
+              {models.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+            <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Submodel <span className="text-gray-300 font-normal">(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={submodel}
+              onChange={(event) => setSubmodel(event.target.value.toUpperCase())}
+              placeholder="e.g. SE, GL, LX"
+              className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#b91c1c] focus:border-[#b91c1c] placeholder:text-gray-300"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+              Engine <span className="text-gray-300 font-normal">(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={engine}
+              onChange={(event) => setEngine(event.target.value)}
+              placeholder="e.g. 1.6L L4"
+              className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#b91c1c] focus:border-[#b91c1c] placeholder:text-gray-300"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={!isValid}
+          className="w-full py-3 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed enabled:bg-[#b91c1c] enabled:text-white enabled:hover:bg-red-800 enabled:shadow-md enabled:shadow-red-100"
+        >
+          <FaMagnifyingGlass className="text-xs" />
+          Search Parts
+          {isValid && <FaChevronRight className="text-xs" />}
+        </button>
+
+        {!isValid && (
+          <p className="text-center text-xs text-gray-400">Year, Make, and Model are required</p>
+        )}
+      </form>
+    </div>
+  );
+};
+
 const MainContent = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVehicleOpen, setIsVehicleOpen] = useState(false);
+  const [isGarageOpen, setIsGarageOpen] = useState(false);
+  const [garageVehicles, setGarageVehicles] = useState([]);
+  const [garageLoading, setGarageLoading] = useState(false);
+  const [garageError, setGarageError] = useState(null);
+  const [garageDeletingKey, setGarageDeletingKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
   const [prevScrollY, setPrevScrollY] = useState(0);
   const searchBoxRef = useRef(null);
+  const vehicleSelectorRef = useRef(null);
+  const garageRef = useRef(null);
 
   const router = useRouter()
 
@@ -86,6 +267,64 @@ const MainContent = () => {
     if (searchBoxRef.current && !searchBoxRef.current.contains(event.target)) {
       setSearchQuery('')
       setShowResults(false);
+    }
+    if (vehicleSelectorRef.current && !vehicleSelectorRef.current.contains(event.target)) {
+      setIsVehicleOpen(false);
+    }
+    if (garageRef.current && !garageRef.current.contains(event.target)) {
+      setIsGarageOpen(false);
+    }
+  };
+
+  const loadGarageVehicles = async () => {
+    setGarageLoading(true);
+    setGarageError(null);
+    try {
+      const session = await fetchUserSession();
+      setGarageVehicles(parseGarageVehicles(session));
+    } catch (err) {
+      console.error('Error loading garage:', err);
+      setGarageError('Could not load your garage. Please try again.');
+      setGarageVehicles([]);
+    } finally {
+      setGarageLoading(false);
+    }
+  };
+
+  const handleGarageToggle = () => {
+    const willOpen = !isGarageOpen;
+    setIsGarageOpen(willOpen);
+    if (willOpen) {
+      setIsVehicleOpen(false);
+      loadGarageVehicles();
+    }
+  };
+
+  const handleVehicleToggle = () => {
+    const willOpen = !isVehicleOpen;
+    setIsVehicleOpen(willOpen);
+    if (willOpen) setIsGarageOpen(false);
+  };
+
+  const handleGarageVehicleSelect = (vehicle) => {
+    setIsGarageOpen(false);
+    router.push(`/search?${vehicleToSearchParams(vehicle).toString()}`);
+  };
+
+  const handleGarageVehicleDelete = async (vehicle) => {
+    const key = vehicleToKey(vehicle);
+    setGarageDeletingKey(key);
+    setGarageError(null);
+    try {
+      await deleteGarageVehicle(vehicleToDeletePayload(vehicle));
+      setGarageVehicles((previous) =>
+        previous.filter((item) => vehicleToKey(item) !== key),
+      );
+    } catch (err) {
+      console.error('Error deleting garage vehicle:', err);
+      setGarageError('Could not remove this vehicle. Please try again.');
+    } finally {
+      setGarageDeletingKey(null);
     }
   };
 
@@ -151,6 +390,8 @@ const MainContent = () => {
       // Reset the search bar on scroll
       setSearchQuery("");
       setShowResults(false);
+      setIsVehicleOpen(false);
+      setIsGarageOpen(false);
 
       // Update navbar visibility based on scroll direction
       setShowNavbar(currentScrollY > prevScrollY && currentScrollY > 100);
@@ -261,6 +502,45 @@ const MainContent = () => {
               )}
 
             </form>
+            <div className="flex items-center gap-2 shrink-0">
+            <div className="relative" ref={vehicleSelectorRef}>
+              <button
+                type="button"
+                onClick={handleVehicleToggle}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold whitespace-nowrap transition-colors ${isVehicleOpen ? 'bg-[#b91c1c] text-white border-[#b91c1c]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#b91c1c] hover:text-[#b91c1c]'}`}
+              >
+                <FaCar className="text-base" />
+                <span>Find by Vehicle</span>
+                <FaChevronDown className={`text-xs transition-transform ${isVehicleOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isVehicleOpen && <VehicleSelector onClose={() => setIsVehicleOpen(false)} />}
+            </div>
+              <div className="relative" ref={garageRef}>
+                <button
+                  type="button"
+                  onClick={handleGarageToggle}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold whitespace-nowrap transition-colors ${isGarageOpen ? 'bg-[#b91c1c] text-white border-[#b91c1c]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#b91c1c] hover:text-[#b91c1c]'}`}
+                  aria-expanded={isGarageOpen}
+                  aria-haspopup="listbox"
+                >
+                  <FaWarehouse className="text-base" />
+                  <span>Garage</span>
+                  <FaChevronDown className={`text-xs transition-transform ${isGarageOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isGarageOpen && (
+                  <GaragePanel
+                    vehicles={garageVehicles}
+                    loading={garageLoading}
+                    error={garageError}
+                    deletingKey={garageDeletingKey}
+                    onSelectVehicle={handleGarageVehicleSelect}
+                    onDeleteVehicle={handleGarageVehicleDelete}
+                    onClose={() => setIsGarageOpen(false)}
+                    onRetry={loadGarageVehicles}
+                  />
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
