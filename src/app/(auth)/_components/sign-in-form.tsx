@@ -8,6 +8,8 @@ import React, { startTransition, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../AuthContext';  // Import the useAuth hook
+import { apiFetch, AUTH_API_BASE_URL } from '@/lib/apiClient';
+import { notifyCartUpdated } from '@/app/CartContext';
 
 export const SignInForm = () => {
   const { setUsername } = useAuth();  // Access the setUsername function from context
@@ -17,11 +19,6 @@ export const SignInForm = () => {
   const urlError = searchParams.get("error") === "OAuthAuthenticatorNotLinked" ? "Email already in use with different Provider" : "";
 
   const router = useRouter();
-
-  const isProduction = process.env.NODE_ENV === 'production';
-    const apiUrl = isProduction
-      ? 'https://westcanuserbackend.onrender.com'
-      : 'http://localhost:8080';
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,15 +37,12 @@ export const SignInForm = () => {
     startTransition(async () => {
       try {
         // Sending the login request to the backend
-        const response = await fetch(`${apiUrl}/api/auth/sign-in`, {
+        const data = await apiFetch('/auth/sign-in', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
+          credentials: 'include',
+          body: values,
+          baseUrl: AUTH_API_BASE_URL,
         });
-
-        const data = await response.json();
 
         // Handle response based on the backend data structure
         if (data?.message === "Bad credentials") {
@@ -61,6 +55,7 @@ export const SignInForm = () => {
 
           // Update the username in the context
           setUsername(data.username);
+          notifyCartUpdated();
 
           // Redirect to home page or callback URL
           if (callBackUrl) {

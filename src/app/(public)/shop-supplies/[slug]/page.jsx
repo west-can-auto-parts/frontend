@@ -6,6 +6,7 @@ import { ProductDescription } from "./_components/product-description";
 import { RelatedParts } from "./_components/related-parts";
 import { BreadCrumbs } from "./_components/head-links";
 import { PartSupplier } from "./_components/part-supplier";
+import { consumePendingProductCategoryFetchId } from "@/lib/productCategoryPendingFetch";
 
 // Skeletons to avoid layout shift while data loads
 const Skeleton = ({ className = "" }) => (
@@ -82,7 +83,11 @@ const Page = ({ params }) => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${apiUrl}/product-category/${slug}`);
+        const pendingId = consumePendingProductCategoryFetchId(slug);
+        const segment = pendingId || slug;
+        const response = await fetch(
+          `${apiUrl}/product-category/${encodeURIComponent(segment)}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch product data");
         }

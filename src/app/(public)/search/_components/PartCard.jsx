@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { setPendingProductCategoryFetchId } from "@/lib/productCategoryPendingFetch";
+import { addItemToCart } from "@/lib/cartApi";
+import { notifyCartUpdated } from "@/app/CartContext";
 
 function stringToSlug(str) {
   if (!str || typeof str !== "string") return "";
@@ -71,6 +73,7 @@ function persistPendingCategoryIdForHref(part, href) {
 }
 
 export function PartCard({ part }) {
+  const router = useRouter();
   const [imgError, setImgError] = useState(false);
 
   const {
@@ -84,8 +87,11 @@ export function PartCard({ part }) {
     price,
     outOfStock,
     fitmentNote,
-    productTags = [],
+    productTags: rawProductTags,
   } = part;
+
+  // API may return null for optional arrays (default params only cover undefined)
+  const productTags = rawProductTags ?? [];
 
   const href = useMemo(
     () => resolvePartHref(part),
@@ -104,20 +110,39 @@ export function PartCard({ part }) {
   );
   const isNavigable = !outOfStock && href !== "#";
 
-  const CardShell = isNavigable ? Link : "div";
-  const shellProps = isNavigable
-    ? {
-        href,
-        className: "block h-full",
-        onClick: () => persistPendingCategoryIdForHref(part, href),
-      }
-    : { className: "h-full" };
+  const handleCardClick = () => {
+    if (!isNavigable) return;
+    persistPendingCategoryIdForHref(part, href);
+    router.push(href);
+  };
+
+  const handleAddToCart = async (event) => {
+    event.stopPropagation();
+    if (outOfStock) return;
+    try {
+      const cart = await addItemToCart(part);
+      notifyCartUpdated({ itemCount: cart?.itemCount });
+    } catch (error) {
+      console.error("Failed to add item to cart:", error);
+    }
+  };
 
   return (
-    <CardShell {...shellProps}>
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md
-                    transition-shadow duration-200 flex flex-col overflow-hidden group h-full">
-
+    <div
+      className={`bg-white rounded-xl border border-gray-200 shadow-sm transition-shadow duration-200 flex flex-col overflow-hidden group h-full ${
+        isNavigable ? "hover:shadow-md cursor-pointer" : ""
+      }`}
+      onClick={handleCardClick}
+      role={isNavigable ? "link" : undefined}
+      tabIndex={isNavigable ? 0 : -1}
+      onKeyDown={(event) => {
+        if (!isNavigable) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleCardClick();
+        }
+      }}
+    >
       {/* ── Image ──────────────────────────────────────────────────── */}
       <div className="relative bg-gray-50 aspect-square overflow-hidden flex items-center justify-center">
         {!imgError && imageUrl ? (
@@ -216,31 +241,30 @@ export function PartCard({ part }) {
 
         {/* Price + CTA */}
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-          <div>
-            <span className="text-xl font-bold text-gray-900">
-              ${price?.toFixed(2)}
-            </span>
-            <span className="text-xs text-gray-400 ml-1">CAD</span>
-          </div>
+          <span className="inline-block whitespace-nowrap font-sans text-xl font-bold leading-none tabular-nums text-gray-900">
+            CAD${Number(price || 0).toFixed(2)}
+          </span>
 
-          {isNavigable ? (
-            <span
-              className="inline-flex px-4 py-2 rounded-lg text-xs font-semibold transition-colors
-                bg-[#b91c1c] text-white group-hover:bg-red-800"
+          <div className="flex items-center gap-2">
+            {/* {!isNavigable && (
+              <span
+                className="inline-flex px-3 py-2 rounded-lg text-xs font-semibold
+                  bg-gray-100 text-gray-400 cursor-not-allowed"
+              >
+                Unavailable
+              </span>
+            )} */}
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+              className="inline-flex px-3 py-2 rounded-lg text-xs font-semibold transition-colors border border-[#b91c1c] text-[#b91c1c] hover:bg-red-50 disabled:border-gray-200 disabled:text-gray-400 disabled:bg-gray-50 disabled:cursor-not-allowed"
             >
-              View Part
-            </span>
-          ) : (
-            <span
-              className="inline-flex px-4 py-2 rounded-lg text-xs font-semibold
-                bg-gray-100 text-gray-400 cursor-not-allowed"
-            >
-              Unavailable
-            </span>
-          )}
+              Add to Cart
+            </button>
+          </div>
         </div>
       </div>
     </div>
-    </CardShell>
   );
 }
