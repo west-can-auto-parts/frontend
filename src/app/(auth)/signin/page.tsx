@@ -11,11 +11,11 @@ const SignInForm = () => {
   const { setUsername } = useAuth();  // Access the setUsername function from context
   const [alertMessage, setAlertMessage] = useState<{ type: 'success' | 'error' | 'info', message: string } | null>(null);
   const [isPending, startTransition] = useTransition();
-  
+
   const searchParams = useSearchParams();
   const callBackUrl = searchParams.get("callbackUrl") || undefined;
-  const urlError = searchParams.get("error") === "OAuthAuthenticatorNotLinked" 
-    ? "Email already in use with different Provider" 
+  const urlError = searchParams.get("error") === "OAuthAuthenticatorNotLinked"
+    ? "Email already in use with different Provider"
     : "";
 
   const router = useRouter();
@@ -25,6 +25,11 @@ const SignInForm = () => {
     ? 'https://westcanadmin.onrender.com'
     : 'http://localhost:8081';
 
+  type LoginResponse = {
+    message?: string;
+    jwt_token?: string;
+    username?: string;
+  };
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       email: "",
@@ -45,11 +50,10 @@ const SignInForm = () => {
           body: JSON.stringify(values),
         });
 
-        const data = await response.json();
-
+        const data: LoginResponse = await response.json();
         if (data?.message === "Bad credentials") {
           setAlertMessage({ type: 'error', message: 'Invalid email or password.' });
-        } else if (data?.jwt_token) {
+        } else if (data.jwt_token && data.username) {
           setAlertMessage({ type: 'success', message: `Welcome, ${data.username}!` });
 
           // Store authentication data
