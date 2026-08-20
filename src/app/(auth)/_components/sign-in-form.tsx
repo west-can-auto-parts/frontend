@@ -11,6 +11,12 @@ import { useAuth } from '../../AuthContext';  // Import the useAuth hook
 import { apiFetch, AUTH_API_BASE_URL } from '@/lib/apiClient';
 import { notifyCartUpdated } from '@/app/CartContext';
 
+type LoginResponse = {
+  message?: string;
+  jwt_token?: string;
+  username?: string;
+};
+
 export const SignInForm = () => {
   const { setUsername } = useAuth();  // Access the setUsername function from context
   const [alertMessage, setAlertMessage] = useState<{ type: 'success' | 'error' | 'info', message: string } | null>(null);
@@ -37,17 +43,17 @@ export const SignInForm = () => {
     startTransition(async () => {
       try {
         // Sending the login request to the backend
-        const data = await apiFetch('/auth/sign-in', {
+        const data = (await apiFetch('/auth/sign-in', {
           method: 'POST',
           credentials: 'include',
           body: values,
           baseUrl: AUTH_API_BASE_URL,
-        });
+        })) as LoginResponse | null;
 
         // Handle response based on the backend data structure
         if (data?.message === "Bad credentials") {
           setAlertMessage({ type: 'error', message: 'Invalid email or password.' });
-        } else if (data?.jwt_token) {
+        } else if (data?.jwt_token && data.username) {
           setAlertMessage({ type: 'success', message: `Welcome, ${data.username}!` });
           // Store the user's name and token in localStorage
           localStorage.setItem('jwt_token', data.jwt_token);
