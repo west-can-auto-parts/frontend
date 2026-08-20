@@ -16,6 +16,10 @@ export type CartUpdatedDetail = {
   itemCount?: number;
 };
 
+type CartCountResponse = {
+  itemCount?: number;
+};
+
 interface CartContextType {
   itemCount: number;
   refreshCart: () => Promise<void>;
@@ -36,7 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const refreshCart = useCallback(async () => {
     try {
-      const data = await fetchCart();
+      const data = (await fetchCart()) as CartCountResponse | null;
       setItemCount(typeof data?.itemCount === "number" ? data.itemCount : 0);
     } catch {
       setItemCount(0);
