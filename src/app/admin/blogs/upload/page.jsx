@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState } from 'react';
-import 'react-quill/dist/quill.snow.css';
+import 'react-quill-new/dist/quill.snow.css';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import { CldUploadWidget, CldImage } from 'next-cloudinary';
 import SuccessModal from '@/components/SuccessModal'
 import FailureModal from '@/components/FailureModal';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 const CreateBlog = () => {
 
