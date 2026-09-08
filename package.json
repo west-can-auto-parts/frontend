@@ -21,6 +21,7 @@
     "@upstash/redis": "^1.35.6",
     "axios": "^1.7.4",
     "bcryptjs": "^2.4.3",
+    "clsx": "^2.1.1",
     "file-loader": "^6.2.0",
     "framer-motion": "^11.3.29",
     "fs": "^0.0.1-security",
@@ -49,6 +50,7 @@
     "resend": "^4.0.0",
     "slick-carousel": "^1.8.1",
     "swiper": "^12.1.2",
+    "tailwind-merge": "^3.6.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
