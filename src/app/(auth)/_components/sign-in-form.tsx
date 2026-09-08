@@ -11,6 +11,7 @@ import { useAuth } from '../../AuthContext';  // Import the useAuth hook
 import { apiFetch, AUTH_API_BASE_URL } from '@/lib/apiClient';
 import { notifyCartUpdated } from '@/app/CartContext';
 
+
 type LoginResponse = {
   message?: string;
   jwt_token?: string;
@@ -40,7 +41,7 @@ export const SignInForm = () => {
       return;
     }
 
-    startTransition(async () => {
+     startTransition(async () => {
       try {
         // Sending the login request to the backend
         const data = (await apiFetch('/auth/sign-in', {
