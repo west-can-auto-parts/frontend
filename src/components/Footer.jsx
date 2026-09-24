@@ -72,7 +72,7 @@ const Footer = () => {
       <div className="w-10/12 mx-auto flex flex-wrap md:flex-nowrap justify-between py-2">
         <p className='text-xs'>Contact Us : info@westcanauto.com</p>
         <p className='text-xs'>
-          © 2025 Copyright West Can Auto Parts | All Rights Reserved
+          © 2026 Copyright West Can Auto Parts | All Rights Reserved
         </p>
         <p className='text-xs flex gap-2 list-none'>
           Follow Us

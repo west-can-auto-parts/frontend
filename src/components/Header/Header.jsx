@@ -306,34 +306,34 @@ const MainContent = () => {
     if (vehicleSelectorRef.current && !vehicleSelectorRef.current.contains(event.target)) {
       setIsVehicleOpen(false);
     }
-    if (garageRef.current && !garageRef.current.contains(event.target)) {
-      setIsGarageOpen(false);
-    }
+    // if (garageRef.current && !garageRef.current.contains(event.target)) {
+    //   setIsGarageOpen(false);
+    // }
   };
 
-  const loadGarageVehicles = async () => {
-    setGarageLoading(true);
-    setGarageError(null);
-    try {
-      const session = await fetchUserSession();
-      setGarageVehicles(parseGarageVehicles(session));
-    } catch (err) {
-      console.error('Error loading garage:', err);
-      setGarageError('Could not load your garage. Please try again.');
-      setGarageVehicles([]);
-    } finally {
-      setGarageLoading(false);
-    }
-  };
+  // const loadGarageVehicles = async () => {
+  //   setGarageLoading(true);
+  //   setGarageError(null);
+  //   try {
+  //     const session = await fetchUserSession();
+  //     setGarageVehicles(parseGarageVehicles(session));
+  //   } catch (err) {
+  //     console.error('Error loading garage:', err);
+  //     setGarageError('Could not load your garage. Please try again.');
+  //     setGarageVehicles([]);
+  //   } finally {
+  //     setGarageLoading(false);
+  //   }
+  // };
 
-  const handleGarageToggle = () => {
-    const willOpen = !isGarageOpen;
-    setIsGarageOpen(willOpen);
-    if (willOpen) {
-      setIsVehicleOpen(false);
-      loadGarageVehicles();
-    }
-  };
+  // const handleGarageToggle = () => {
+  //   const willOpen = !isGarageOpen;
+  //   setIsGarageOpen(willOpen);
+  //   if (willOpen) {
+  //     setIsVehicleOpen(false);
+  //     loadGarageVehicles();
+  //   }
+  // };
 
   const handleVehicleToggle = () => {
     const willOpen = !isVehicleOpen;
@@ -550,7 +550,7 @@ const MainContent = () => {
               </button>
               {isVehicleOpen && <VehicleSelector onClose={() => setIsVehicleOpen(false)} />}
             </div>
-              <div className="relative" ref={garageRef}>
+              {/* <div className="relative" ref={garageRef}>
                 <button
                   type="button"
                   onClick={handleGarageToggle}
@@ -574,7 +574,7 @@ const MainContent = () => {
                     onRetry={loadGarageVehicles}
                   />
                 )}
-              </div>
+              </div> */}
               <Link
                 href="/cart"
                 className="relative flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-semibold whitespace-nowrap transition-colors bg-white text-gray-700 border-gray-300 hover:border-[#b91c1c] hover:text-[#b91c1c]"
