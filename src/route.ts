@@ -1,35 +1,34 @@
 /**
- * An array of routes that are accessible to the public
- * These routes do not require authentication
- * @type {string[]}
- * 
- * 
+ * Prefixes that require a NextAuth session.
+ * All other pages (shop, careers, cart, search, etc.) are public.
  */
-export const publicRoutes = ["/", "/auth/new-verification"];
-
+export const protectedRoutePrefixes = ["/admin", "/profile"];
 
 /**
- * An array of routes that are used for authentication
- * These routes will redirect logged in users to /settings
- * @type {string[]}
+ * Auth pages. Logged-in NextAuth users are sent to DEFAULT_LOGIN_REDIRECT.
  */
 export const authRoutes = [
+  "/sign-in",
+  "/sign-up",
+  "/signin",
+  "/forgot-password",
+  "/reset-password",
   "/auth/login",
   "/auth/register",
   "/auth/error",
   "/auth/reset",
   "/auth/new-password",
+  "/auth/new-verification",
 ];
 
-/**
- * The prefix for API authentication routes
- * Routes that start with this prefix are used for API authentication puposes
- * @type {string}
- */
 export const apiAuthPrefix = "/api/auth";
 
-/**
- * The default redirect path after loggin in
- * @type {string}
- */
 export const DEFAULT_LOGIN_REDIRECT = "/profile";
+
+export const LOGIN_PATH = "/sign-in";
+
+export function matchesPrefix(pathname: string, prefixes: string[]) {
+  return prefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
